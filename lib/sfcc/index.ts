@@ -11,16 +11,7 @@ import { defaultSort, storeCatalog, TAGS } from "lib/constants";
 import { unstable_cache as cache, revalidateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { getProductRecommendations as getOCProductRecommendations } from "./ocapi";
-import {
-  Cart,
-  CartItem,
-  Collection,
-  Image,
-  Product,
-  ProductRecommendations,
-  SdkError,
-} from "./types";
+import { Cart, CartItem, Collection, Image, Product, SdkError } from "./types";
 
 const apiConfig = {
   throwOnBadResponse: true,
@@ -267,34 +258,18 @@ export async function updateCart(
 }
 
 export async function getProductRecommendations(productId: string) {
-  const ocProductRecommendations =
-    await getOCProductRecommendations<ProductRecommendations>(productId);
+  // This Shopper APIs do not provide a recommendation service. This is typically
+  // done through Einstein, which isn't available in this environment.
+  // For now, we refetch the product and use the categoryId to get recommendations.
+  // This fills the need for now and doesn't require changes to the UI.
+  const categoryId = (await getProduct(productId)).categoryId;
 
-  if (!ocProductRecommendations?.recommendations?.length) return [];
+  if (!categoryId) return [];
 
-  const config = await getGuestUserConfig();
-  const productsClient = new ShopperProducts(config);
+  const products = await searchProducts({ categoryId, limit: 11 });
 
-  const recommendedProducts: SortedProductResult[] = [];
-
-  await Promise.all(
-    ocProductRecommendations.recommendations.map(
-      async (recommendation, index) => {
-        const productResult = await productsClient.getProduct({
-          parameters: {
-            id: recommendation.recommended_item_id,
-          },
-        });
-        recommendedProducts.push({ productResult, index });
-      }
-    )
-  );
-
-  const sortedResults = recommendedProducts
-    .sort((a, b) => a.index - b.index)
-    .map((item) => item.productResult);
-
-  return reshapeProducts(sortedResults);
+  // Filter out the product we're already looking at.
+  return products.filter((product) => product.id !== productId);
 }
 
 export async function revalidate(req: NextRequest) {
@@ -394,8 +369,14 @@ async function searchProducts(options: {
   query?: string;
   categoryId?: string;
   sortKey?: string;
+  limit?: number;
 }) {
-  const { query, categoryId, sortKey = defaultSort.sortKey } = options;
+  const {
+    query,
+    categoryId,
+    sortKey = defaultSort.sortKey,
+    limit = 100,
+  } = options;
   const config = await getGuestUserConfig();
 
   const searchClient = new ShopperSearch(config);
@@ -404,7 +385,7 @@ async function searchProducts(options: {
       q: query || "",
       refine: categoryId ? [`cgid=${categoryId}`] : [],
       sort: sortKey,
-      limit: 100,
+      limit,
     },
   });
 
@@ -516,6 +497,7 @@ function reshapeProduct(product: ShopperProductsTypes.Product) {
     title: product.name,
     description: product.shortDescription || "",
     descriptionHtml: product.longDescription || "",
+    categoryId: product.primaryCategoryId,
     tags: product["c_product-tags"] || [],
     featuredImage: images[0],
     // TODO: check dates for whether it is available
