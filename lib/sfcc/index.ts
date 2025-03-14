@@ -599,7 +599,7 @@ function reshapeVariant(
 ) {
   return {
     id: variant.productId,
-    title: variant.productName || "",
+    title: product.name || "",
     availableForSale: variant.orderable || false,
     selectedOptions:
       Object.entries(variant.variationValues || {}).map(([key, value]) => ({
@@ -614,7 +614,7 @@ function reshapeVariant(
             ?.values?.find((v) => v.value === value)?.name || "",
       })) || [],
     price: {
-      amount: (variant.price || 0).toString(),
+      amount: variant.price?.toString() || "0",
       currencyCode: product.currency || "USD",
     },
   };
