@@ -21,7 +21,7 @@ import {
   ProductRecommendations,
 } from "./types";
 
-const shoppercfg = {
+const apiConfig = {
   throwOnBadResponse: true,
   parameters: {
     clientId: process.env.SFCC_CLIENT_ID || "",
@@ -334,7 +334,7 @@ export async function revalidate(req: NextRequest) {
 }
 
 async function getGuestUserAuthToken() {
-  const loginClient = new ShopperLogin(shoppercfg);
+  const loginClient = new ShopperLogin(apiConfig);
   try {
     const r = await helpers.loginGuestUserPrivate(
       loginClient,
@@ -356,7 +356,7 @@ async function getGuestUserConfig(token?: string) {
   const guestToken = token || (await getGuestUserAuthToken()).access_token;
   console.log("guestToken", guestToken);
   return {
-    ...shoppercfg,
+    ...apiConfig,
     headers: {
       authorization: `Bearer ${guestToken}`,
     },
