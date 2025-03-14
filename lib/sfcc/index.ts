@@ -19,6 +19,7 @@ import {
   Image,
   Product,
   ProductRecommendations,
+  SdkError,
 } from "./types";
 
 const apiConfig = {
@@ -336,16 +337,17 @@ export async function revalidate(req: NextRequest) {
 async function getGuestUserAuthToken() {
   const loginClient = new ShopperLogin(apiConfig);
   try {
-    const r = await helpers.loginGuestUserPrivate(
+    return await helpers.loginGuestUserPrivate(
       loginClient,
       {},
       { clientSecret: process.env.SFCC_SECRET || "" }
     );
-    console.log("r", r);
-    return r;
-  } catch (e: any) {
-    if (e.response?.json) {
-      const error = await e.response.json();
+  } catch (e) {
+    // The commerce sdk is configured to throw a custom error for any 400 or 500 response.
+    // See https://github.com/SalesforceCommerceCloud/commerce-sdk-isomorphic/tree/main?tab=readme-ov-file#throwonbadresponse
+    const sdkError = e as SdkError;
+    if (sdkError.response) {
+      const error = await sdkError.response.json();
       throw error;
     }
     throw new Error("Failed to retrieve access token");
@@ -354,7 +356,6 @@ async function getGuestUserAuthToken() {
 
 async function getGuestUserConfig(token?: string) {
   const guestToken = token || (await getGuestUserAuthToken()).access_token;
-  console.log("guestToken", guestToken);
   return {
     ...apiConfig,
     headers: {
