@@ -1,10 +1,12 @@
 import {
-  Checkout,
-  Customer,
-  Product as SalesforceProduct,
-  Search,
-} from "commerce-sdk";
-import { ShopperBaskets } from "commerce-sdk/dist/checkout/checkout";
+  helpers,
+  ShopperBaskets,
+  ShopperBasketsTypes,
+  ShopperLogin,
+  ShopperProducts,
+  ShopperProductsTypes,
+  ShopperSearch,
+} from "commerce-sdk-isomorphic";
 import { defaultSort, storeCatalog, TAGS } from "lib/constants";
 import { unstable_cache as cache, revalidateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
@@ -20,17 +22,17 @@ import {
 } from "./types";
 
 const config = {
-  headers: {},
+  throwOnBadResponse: true,
   parameters: {
-    clientId: process.env.SFCC_CLIENT_ID,
-    organizationId: process.env.SFCC_ORGANIZATIONID,
-    shortCode: process.env.SFCC_SHORTCODE,
-    siteId: process.env.SFCC_SITEID,
+    clientId: process.env.SFCC_CLIENT_ID || "",
+    organizationId: process.env.SFCC_ORGANIZATIONID || "",
+    shortCode: process.env.SFCC_SHORTCODE || "",
+    siteId: process.env.SFCC_SITEID || "",
   },
 };
 
 type SortedProductResult = {
-  productResult: SalesforceProduct.ShopperProducts.Product;
+  productResult: ShopperProductsTypes.Product;
   index: number;
 };
 
@@ -108,10 +110,10 @@ export async function createCart() {
   }
 
   // get the guest config
-  const config = await getGuestUserConfig(guestToken);
+  const clientConfig = await getGuestUserConfig(guestToken);
 
-  // initialize the basket config
-  const basketClient = new Checkout.ShopperBaskets(config);
+  // initialize the basket client
+  const basketClient = new ShopperBaskets(clientConfig);
 
   // create an empty ShopperBaskets.Basket
   const createdBasket = await basketClient.createBasket({
@@ -128,18 +130,16 @@ export async function getCart(): Promise<Cart | undefined> {
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
 
-  const config = await getGuestUserConfig(guestToken);
+  const clientConfig = await getGuestUserConfig(guestToken);
 
   if (!cartId) return;
 
   try {
-    const basketClient = new Checkout.ShopperBaskets(config);
+    const basketClient = new ShopperBaskets(clientConfig);
 
     const basket = await basketClient.getBasket({
       parameters: {
         basketId: cartId,
-        organizationId: process.env.SFCC_ORGANIZATIONID,
-        siteId: process.env.SFCC_SITEID,
       },
     });
 
@@ -159,16 +159,14 @@ export async function addToCart(
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
-  const config = await getGuestUserConfig(guestToken);
+  const clientConfig = await getGuestUserConfig(guestToken);
 
   try {
-    const basketClient = new Checkout.ShopperBaskets(config);
+    const basketClient = new ShopperBaskets(clientConfig);
 
     const basket = await basketClient.addItemToBasket({
       parameters: {
         basketId: cartId,
-        organizationId: process.env.SFCC_ORGANIZATIONID,
-        siteId: process.env.SFCC_SITEID,
       },
       body: lines.map((line) => {
         return {
@@ -196,9 +194,9 @@ export async function removeFromCart(lineIds: string[]) {
 
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
-  const config = await getGuestUserConfig(guestToken);
+  const clientConfig = await getGuestUserConfig(guestToken);
 
-  const basketClient = new Checkout.ShopperBaskets(config);
+  const basketClient = new ShopperBaskets(clientConfig);
 
   const basket = await basketClient.removeItemFromBasket({
     parameters: {
@@ -217,9 +215,9 @@ export async function updateCart(
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
-  const config = await getGuestUserConfig(guestToken);
+  const clientConfig = await getGuestUserConfig(guestToken);
 
-  const basketClient = new Checkout.ShopperBaskets(config);
+  const basketClient = new ShopperBaskets(clientConfig);
 
   // ProductItem quantity can not be updated through the API
   // Quantity updates need to remove all items from the cart and add them back with updated quantities
@@ -274,7 +272,7 @@ export async function getProductRecommendations(productId: string) {
   if (!ocProductRecommendations?.recommendations?.length) return [];
 
   const clientConfig = await getGuestUserConfig();
-  const productsClient = new SalesforceProduct.ShopperProducts(clientConfig);
+  const productsClient = new ShopperProducts(clientConfig);
 
   const recommendedProducts: SortedProductResult[] = [];
 
@@ -283,8 +281,6 @@ export async function getProductRecommendations(productId: string) {
       async (recommendation, index) => {
         const productResult = await productsClient.getProduct({
           parameters: {
-            organizationId: clientConfig.parameters.organizationId,
-            siteId: clientConfig.parameters.siteId,
             id: recommendation.recommended_item_id,
           },
         });
@@ -294,7 +290,7 @@ export async function getProductRecommendations(productId: string) {
   );
 
   const sortedResults = recommendedProducts
-    .sort((a: any, b: any) => a.index - b.index)
+    .sort((a, b) => a.index - b.index)
     .map((item) => item.productResult);
 
   return reshapeProducts(sortedResults);
@@ -338,28 +334,27 @@ export async function revalidate(req: NextRequest) {
 }
 
 async function getGuestUserAuthToken() {
-  const base64data = Buffer.from(
-    `${process.env.SFCC_CLIENT_ID}:${process.env.SFCC_SECRET}`
-  ).toString("base64");
-  const headers = { Authorization: `Basic ${base64data}` };
-  const client = new Customer.ShopperLogin(config);
-
-  return await client.getAccessToken({
-    headers,
-    body: {
-      grant_type: "client_credentials",
-      channel_id: process.env.SFCC_SITEID,
-    },
-  });
+  const loginClient = new ShopperLogin(config);
+  try {
+    const r = await helpers.loginGuestUserPrivate(
+      loginClient,
+      {},
+      { clientSecret: process.env.SFCC_SECRET || "" }
+    );
+    console.log("r", r);
+    return r;
+  } catch (e: any) {
+    if (e.response?.json) {
+      const error = await e.response.json();
+      throw error;
+    }
+    throw new Error("Failed to retrieve access token");
+  }
 }
 
 async function getGuestUserConfig(token?: string) {
   const guestToken = token || (await getGuestUserAuthToken()).access_token;
-
-  if (!guestToken) {
-    throw new Error("Failed to retrieve access token");
-  }
-
+  console.log("guestToken", guestToken);
   return {
     ...config,
     headers: {
@@ -369,8 +364,8 @@ async function getGuestUserConfig(token?: string) {
 }
 
 async function getSFCCCollections() {
-  const config = await getGuestUserConfig();
-  const productsClient = new SalesforceProduct.ShopperProducts(config);
+  const clientConfig = await getGuestUserConfig();
+  const productsClient = new ShopperProducts(clientConfig);
 
   const result = await productsClient.getCategories({
     parameters: {
@@ -378,17 +373,15 @@ async function getSFCCCollections() {
     },
   });
 
-  return reshapeCategories(result.data || []);
+  return reshapeCategories(result?.data || []);
 }
 
 async function getSFCCProduct(id: string) {
-  const config = await getGuestUserConfig();
-  const productsClient = new SalesforceProduct.ShopperProducts(config);
+  const clientConfig = await getGuestUserConfig();
+  const productsClient = new ShopperProducts(clientConfig);
 
   const product = await productsClient.getProduct({
     parameters: {
-      organizationId: config.parameters.organizationId,
-      siteId: config.parameters.siteId,
       id,
     },
   });
@@ -402,9 +395,9 @@ async function searchProducts(options: {
   sortKey?: string;
 }) {
   const { query, categoryId, sortKey = defaultSort.sortKey } = options;
-  const config = await getGuestUserConfig();
+  const clientConfig = await getGuestUserConfig();
 
-  const searchClient = new Search.ShopperSearch(config);
+  const searchClient = new ShopperSearch(clientConfig);
   const searchResults = await searchClient.productSearch({
     parameters: {
       q: query || "",
@@ -416,30 +409,26 @@ async function searchProducts(options: {
 
   const results: SortedProductResult[] = [];
 
-  const productsClient = new SalesforceProduct.ShopperProducts(config);
+  const productsClient = new ShopperProducts(clientConfig);
   await Promise.all(
-    searchResults.hits.map(
-      async (product: { productId: string }, index: number) => {
-        const productResult = await productsClient.getProduct({
-          parameters: {
-            organizationId: config.parameters.organizationId,
-            siteId: config.parameters.siteId,
-            id: product.productId,
-          },
-        });
-        results.push({ productResult, index });
-      }
-    )
+    searchResults.hits.map(async (product, index) => {
+      const productResult = await productsClient.getProduct({
+        parameters: {
+          id: product.productId,
+        },
+      });
+      results.push({ productResult, index });
+    })
   );
 
   const sortedResults = results
-    .sort((a: any, b: any) => a.index - b.index)
+    .sort((a, b) => a.index - b.index)
     .map((item) => item.productResult);
 
   return reshapeProducts(sortedResults);
 }
 
-async function getCartItems(createdBasket: ShopperBaskets.Basket) {
+async function getCartItems(createdBasket: ShopperBasketsTypes.Basket) {
   const cartItems: CartItem[] = [];
 
   if (createdBasket.productItems) {
@@ -448,32 +437,30 @@ async function getCartItems(createdBasket: ShopperBaskets.Basket) {
     // Fetch all matching products for items in the cart
     await Promise.all(
       createdBasket.productItems
-        .filter((l: ShopperBaskets.ProductItem) => l.productId)
-        .map(async (l: ShopperBaskets.ProductItem) => {
+        .filter((l) => l.productId)
+        .map(async (l) => {
           const product = await getProduct(l.productId!);
           productsInCart.push(product);
         })
     );
 
     // Reshape the sfcc items and push them onto the cartItems
-    createdBasket.productItems.map(
-      (productItem: ShopperBaskets.ProductItem) => {
-        cartItems.push(
-          reshapeProductItem(
-            productItem,
-            createdBasket.currency || "USD",
-            productsInCart.find((p) => p.id === productItem.productId)!
-          )
-        );
-      }
-    );
+    createdBasket.productItems.map((productItem) => {
+      cartItems.push(
+        reshapeProductItem(
+          productItem,
+          createdBasket.currency || "USD",
+          productsInCart.find((p) => p.id === productItem.productId)!
+        )
+      );
+    });
   }
 
   return cartItems;
 }
 
 function reshapeCategory(
-  category: SalesforceProduct.ShopperProducts.Category
+  category: ShopperProductsTypes.Category
 ): Collection | undefined {
   if (!category) {
     return undefined;
@@ -492,9 +479,7 @@ function reshapeCategory(
   };
 }
 
-function reshapeCategories(
-  categories: SalesforceProduct.ShopperProducts.Category[]
-) {
+function reshapeCategories(categories: ShopperProductsTypes.Category[]) {
   const reshapedCategories = [];
   for (const category of categories) {
     if (category) {
@@ -507,7 +492,7 @@ function reshapeCategories(
   return reshapedCategories;
 }
 
-function reshapeProduct(product: SalesforceProduct.ShopperProducts.Product) {
+function reshapeProduct(product: ShopperProductsTypes.Product) {
   if (!product.name) {
     throw new Error("Product name is not set");
   }
@@ -547,17 +532,19 @@ function reshapeProduct(product: SalesforceProduct.ShopperProducts.Product) {
     },
     images: images,
     options:
-      product.variationAttributes?.map((attribute) => {
-        return {
-          id: attribute.id,
-          name: attribute.name!,
-          // TODO: might be a better way to do this, we are providing the name as the value
-          values:
-            attribute.values
-              ?.filter((v) => v.value !== undefined)
-              ?.map((v) => v.name!) || [],
-        };
-      }) || [],
+      product.variationAttributes?.map(
+        (attribute: ShopperProductsTypes.VariationAttribute) => {
+          return {
+            id: attribute.id,
+            name: attribute.name!,
+            // TODO: might be a better way to do this, we are providing the name as the value
+            values:
+              attribute.values
+                ?.filter((v) => v.value !== undefined)
+                ?.map((v) => v.name!) || [],
+          };
+        }
+      ) || [],
     seo: {
       title: product.pageTitle || "",
       description: product.pageDescription || "",
@@ -567,9 +554,7 @@ function reshapeProduct(product: SalesforceProduct.ShopperProducts.Product) {
   };
 }
 
-function reshapeProducts(
-  products: SalesforceProduct.ShopperProducts.Product[]
-) {
+function reshapeProducts(products: ShopperProductsTypes.Product[]) {
   const reshapedProducts = [];
   for (const product of products) {
     if (product) {
@@ -583,7 +568,7 @@ function reshapeProducts(
 }
 
 function reshapeImages(
-  imageGroups: SalesforceProduct.ShopperProducts.ImageGroup[] | undefined
+  imageGroups: ShopperProductsTypes.ImageGroup[] | undefined
 ): Image[] {
   if (!imageGroups) return [];
 
@@ -602,19 +587,19 @@ function reshapeImages(
 }
 
 function reshapeVariants(
-  variants: SalesforceProduct.ShopperProducts.Variant[],
-  product: SalesforceProduct.ShopperProducts.Product
+  variants: ShopperProductsTypes.Variant[],
+  product: ShopperProductsTypes.Product
 ) {
   return variants.map((variant) => reshapeVariant(variant, product));
 }
 
 function reshapeVariant(
-  variant: SalesforceProduct.ShopperProducts.Variant,
-  product: SalesforceProduct.ShopperProducts.Product
+  variant: ShopperProductsTypes.Variant,
+  product: ShopperProductsTypes.Product
 ) {
   return {
     id: variant.productId,
-    title: product.name || "",
+    title: variant.productName || "",
     availableForSale: variant.orderable || false,
     selectedOptions:
       Object.entries(variant.variationValues || {}).map(([key, value]) => ({
@@ -629,14 +614,14 @@ function reshapeVariant(
             ?.values?.find((v) => v.value === value)?.name || "",
       })) || [],
     price: {
-      amount: variant.price?.toString() || "0",
+      amount: (variant.price || 0).toString(),
       currencyCode: product.currency || "USD",
     },
   };
 }
 
 function reshapeProductItem(
-  item: Checkout.ShopperBaskets.ProductItem,
+  item: ShopperBasketsTypes.ProductItem,
   currency: string,
   matchingProduct: Product
 ): CartItem {
@@ -665,7 +650,7 @@ function reshapeProductItem(
 }
 
 function reshapeBasket(
-  basket: ShopperBaskets.Basket,
+  basket: ShopperBasketsTypes.Basket,
   cartItems: CartItem[]
 ): Cart {
   return {
