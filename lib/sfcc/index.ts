@@ -21,7 +21,7 @@ import {
   ProductRecommendations,
 } from "./types";
 
-const config = {
+const shoppercfg = {
   throwOnBadResponse: true,
   parameters: {
     clientId: process.env.SFCC_CLIENT_ID || "",
@@ -110,10 +110,10 @@ export async function createCart() {
   }
 
   // get the guest config
-  const clientConfig = await getGuestUserConfig(guestToken);
+  const config = await getGuestUserConfig(guestToken);
 
   // initialize the basket client
-  const basketClient = new ShopperBaskets(clientConfig);
+  const basketClient = new ShopperBaskets(config);
 
   // create an empty ShopperBaskets.Basket
   const createdBasket = await basketClient.createBasket({
@@ -130,12 +130,12 @@ export async function getCart(): Promise<Cart | undefined> {
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
 
-  const clientConfig = await getGuestUserConfig(guestToken);
+  const config = await getGuestUserConfig(guestToken);
 
   if (!cartId) return;
 
   try {
-    const basketClient = new ShopperBaskets(clientConfig);
+    const basketClient = new ShopperBaskets(config);
 
     const basket = await basketClient.getBasket({
       parameters: {
@@ -159,10 +159,10 @@ export async function addToCart(
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
-  const clientConfig = await getGuestUserConfig(guestToken);
+  const config = await getGuestUserConfig(guestToken);
 
   try {
-    const basketClient = new ShopperBaskets(clientConfig);
+    const basketClient = new ShopperBaskets(config);
 
     const basket = await basketClient.addItemToBasket({
       parameters: {
@@ -194,9 +194,9 @@ export async function removeFromCart(lineIds: string[]) {
 
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
-  const clientConfig = await getGuestUserConfig(guestToken);
+  const config = await getGuestUserConfig(guestToken);
 
-  const basketClient = new ShopperBaskets(clientConfig);
+  const basketClient = new ShopperBaskets(config);
 
   const basket = await basketClient.removeItemFromBasket({
     parameters: {
@@ -215,9 +215,9 @@ export async function updateCart(
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
-  const clientConfig = await getGuestUserConfig(guestToken);
+  const config = await getGuestUserConfig(guestToken);
 
-  const basketClient = new ShopperBaskets(clientConfig);
+  const basketClient = new ShopperBaskets(config);
 
   // ProductItem quantity can not be updated through the API
   // Quantity updates need to remove all items from the cart and add them back with updated quantities
@@ -271,8 +271,8 @@ export async function getProductRecommendations(productId: string) {
 
   if (!ocProductRecommendations?.recommendations?.length) return [];
 
-  const clientConfig = await getGuestUserConfig();
-  const productsClient = new ShopperProducts(clientConfig);
+  const config = await getGuestUserConfig();
+  const productsClient = new ShopperProducts(config);
 
   const recommendedProducts: SortedProductResult[] = [];
 
@@ -334,7 +334,7 @@ export async function revalidate(req: NextRequest) {
 }
 
 async function getGuestUserAuthToken() {
-  const loginClient = new ShopperLogin(config);
+  const loginClient = new ShopperLogin(shoppercfg);
   try {
     const r = await helpers.loginGuestUserPrivate(
       loginClient,
@@ -356,7 +356,7 @@ async function getGuestUserConfig(token?: string) {
   const guestToken = token || (await getGuestUserAuthToken()).access_token;
   console.log("guestToken", guestToken);
   return {
-    ...config,
+    ...shoppercfg,
     headers: {
       authorization: `Bearer ${guestToken}`,
     },
@@ -364,8 +364,8 @@ async function getGuestUserConfig(token?: string) {
 }
 
 async function getSFCCCollections() {
-  const clientConfig = await getGuestUserConfig();
-  const productsClient = new ShopperProducts(clientConfig);
+  const config = await getGuestUserConfig();
+  const productsClient = new ShopperProducts(config);
 
   const result = await productsClient.getCategories({
     parameters: {
@@ -377,8 +377,8 @@ async function getSFCCCollections() {
 }
 
 async function getSFCCProduct(id: string) {
-  const clientConfig = await getGuestUserConfig();
-  const productsClient = new ShopperProducts(clientConfig);
+  const config = await getGuestUserConfig();
+  const productsClient = new ShopperProducts(config);
 
   const product = await productsClient.getProduct({
     parameters: {
@@ -395,9 +395,9 @@ async function searchProducts(options: {
   sortKey?: string;
 }) {
   const { query, categoryId, sortKey = defaultSort.sortKey } = options;
-  const clientConfig = await getGuestUserConfig();
+  const config = await getGuestUserConfig();
 
-  const searchClient = new ShopperSearch(clientConfig);
+  const searchClient = new ShopperSearch(config);
   const searchResults = await searchClient.productSearch({
     parameters: {
       q: query || "",
@@ -409,7 +409,7 @@ async function searchProducts(options: {
 
   const results: SortedProductResult[] = [];
 
-  const productsClient = new ShopperProducts(clientConfig);
+  const productsClient = new ShopperProducts(config);
   await Promise.all(
     searchResults.hits.map(async (product, index) => {
       const productResult = await productsClient.getProduct({
