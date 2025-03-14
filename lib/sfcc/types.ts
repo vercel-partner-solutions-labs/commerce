@@ -1,3 +1,5 @@
+import { ShopperBasketsTypes, ShopperProductsTypes } from "commerce-sdk-isomorphic";
+
 export type Connection<T> = {
   edges: Array<Edge<T>>;
 };
@@ -35,7 +37,7 @@ export type SalesforceProduct = {
   updatedAt: string;
 };
 
-export type Product = Omit<SalesforceProduct, 'variants' | 'images'> & {
+export type Product = Omit<SalesforceProduct, "variants" | "images"> & {
   variants: ProductVariant[];
   images: Image[];
 };
@@ -74,20 +76,50 @@ export type SEO = {
   description: string;
 };
 
+export type ShippingMethod = {
+  id: string;
+  name?: string;
+  description?: string;
+  price?: Money;
+  isDefault?: boolean;
+};
+
 export type SalesforceCart = {
   id: string | undefined;
   checkoutUrl: string;
+  customerEmail?: string;
   cost: {
     subtotalAmount: Money;
     totalAmount: Money;
     totalTaxAmount: Money;
+    shippingAmount?: Money;
   };
   lines: Connection<CartItem>;
   totalQuantity: number;
+  shippingAddress?: Address;
+  billingAddress?: Address;
+  shippingMethod?: ShippingMethod;
+  paymentInstruments?: ShopperBasketsTypes.OrderPaymentInstrument[];
 };
 
-export type Cart = Omit<SalesforceCart, 'lines'> & {
+export type Address = {
+  firstName?: string;
+  lastName?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  country?: string;
+  phone?: string;
+};
+
+export type Cart = Omit<SalesforceCart, "lines"> & {
   lines: CartItem[];
+};
+
+export type Order = Cart & {
+  orderNumber: string;
 };
 
 export type CartItem = {
@@ -144,4 +176,9 @@ export type Page = {
   seo?: SEO;
   createdAt: string;
   updatedAt: string;
+};
+
+export type SortedProductResult = {
+  productResult: ShopperProductsTypes.Product;
+  index: number;
 };
