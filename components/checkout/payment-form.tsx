@@ -75,7 +75,6 @@ export function PaymentForm() {
                 errors?.cardholderName ? "cardholderName-error" : undefined
               }
               disabled={pending}
-              defaultValue="Test User"
             />
             {errors?.cardholderName && (
               <p id="cardholderName-error" className="text-sm text-red-500" role="alert">
@@ -93,7 +92,6 @@ export function PaymentForm() {
               aria-invalid={errors?.cardNumber ? true : false}
               disabled={pending}
               error={errors?.cardNumber?.[0]}
-              defaultValue="4111111111111111"
             />
             {errors?.cardNumber && (
               <p className="text-sm text-red-500">{errors.cardNumber[0]}</p>
@@ -103,12 +101,7 @@ export function PaymentForm() {
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="expirationMonth">Month</Label>
-              <Select
-                name="expirationMonth"
-                required
-                disabled={pending}
-                defaultValue="01"
-              >
+              <Select name="expirationMonth" required disabled={pending}>
                 <SelectTrigger
                   id="expirationMonth"
                   aria-invalid={errors?.expirationMonth ? "true" : "false"}
@@ -130,12 +123,7 @@ export function PaymentForm() {
 
             <div className="space-y-1.5">
               <Label htmlFor="expirationYear">Year</Label>
-              <Select
-                name="expirationYear"
-                required
-                disabled={pending}
-                defaultValue="2026"
-              >
+              <Select name="expirationYear" required disabled={pending}>
                 <SelectTrigger
                   id="expirationYear"
                   aria-invalid={errors?.expirationYear ? "true" : "false"}
@@ -168,7 +156,6 @@ export function PaymentForm() {
                   errors?.securityCode ? "securityCode-error" : undefined
                 }
                 disabled={pending}
-                defaultValue="123"
               />
               {errors?.securityCode && (
                 <p className="text-sm text-red-500">{errors.securityCode[0]}</p>
