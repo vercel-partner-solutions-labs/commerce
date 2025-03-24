@@ -55,28 +55,21 @@ export const getProduct = cache(
 export const getCollectionProducts = cache(
   async ({
     collection,
-    reverse,
+    limit,
     sortKey,
   }: {
     collection: string;
-    reverse?: boolean;
+    limit?: number;
     sortKey?: string;
   }) => {
-    return await searchProducts({ categoryId: collection, sortKey });
+    return await searchProducts({ categoryId: collection, limit, sortKey });
   },
   ["get-collection-products"],
   { tags: [TAGS.products, TAGS.collections] }
 );
 
 export const getProducts = cache(
-  async ({
-    query,
-    sortKey,
-  }: {
-    query?: string;
-    sortKey?: string;
-    reverse?: boolean;
-  }) => {
+  async ({ query, sortKey }: { query?: string; sortKey?: string; reverse?: boolean }) => {
     return await searchProducts({ query, sortKey });
   },
   ["get-products"],
@@ -145,9 +138,7 @@ export async function getCart(): Promise<Cart | undefined> {
   }
 }
 
-export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[]
-) {
+export async function addToCart(lines: { merchandiseId: string; quantity: number }[]) {
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -181,8 +172,7 @@ export async function addToCart(
 export async function removeFromCart(lineIds: string[]) {
   const cartId = (await cookies()).get("cartId")?.value!;
   // Next Commerce only sends one lineId at a time
-  if (lineIds.length !== 1)
-    throw new Error("Invalid number of line items provided");
+  if (lineIds.length !== 1) throw new Error("Invalid number of line items provided");
 
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -266,7 +256,7 @@ export async function getProductRecommendations(productId: string) {
 
   if (!categoryId) return [];
 
-  const products = await searchProducts({ categoryId, limit: 11 });
+  const products = await getCollectionProducts({ collection: categoryId, limit: 11 });
 
   // Filter out the product we're already looking at.
   return products.filter((product) => product.id !== productId);
@@ -278,11 +268,7 @@ export async function revalidate(req: NextRequest) {
     "collections/delete",
     "collections/update",
   ];
-  const productWebhooks = [
-    "products/create",
-    "products/delete",
-    "products/update",
-  ];
+  const productWebhooks = ["products/create", "products/delete", "products/update"];
   const topic = (await headers()).get("x-sfcc-topic") || "unknown";
   const secret = req.nextUrl.searchParams.get("secret");
   const isCollectionUpdate = collectionWebhooks.includes(topic);
@@ -371,12 +357,8 @@ async function searchProducts(options: {
   sortKey?: string;
   limit?: number;
 }) {
-  const {
-    query,
-    categoryId,
-    sortKey = defaultSort.sortKey,
-    limit = 100,
-  } = options;
+  console.log("searchProducts", options);
+  const { query, categoryId, sortKey = defaultSort.sortKey, limit = 100 } = options;
   const config = await getGuestUserConfig();
 
   const searchClient = new ShopperSearch(config);
@@ -587,9 +569,7 @@ function reshapeVariant(
     selectedOptions:
       Object.entries(variant.variationValues || {}).map(([key, value]) => ({
         // TODO: we use the name here instead of the key because the frontend only uses names
-        name:
-          product.variationAttributes?.find((attr) => attr.id === key)?.name ||
-          key,
+        name: product.variationAttributes?.find((attr) => attr.id === key)?.name || key,
         // TODO: might be a cleaner way to do this, we need to look up the name on the list of values from the variationAttributes
         value:
           product.variationAttributes
@@ -632,10 +612,7 @@ function reshapeProductItem(
   };
 }
 
-function reshapeBasket(
-  basket: ShopperBasketsTypes.Basket,
-  cartItems: CartItem[]
-): Cart {
+function reshapeBasket(basket: ShopperBasketsTypes.Basket, cartItems: CartItem[]): Cart {
   return {
     id: basket.basketId!,
     checkoutUrl: "/checkout",
@@ -653,8 +630,7 @@ function reshapeBasket(
         currencyCode: basket.currency || "USD",
       },
     },
-    totalQuantity:
-      cartItems?.reduce((acc, item) => acc + (item?.quantity ?? 0), 0) ?? 0,
+    totalQuantity: cartItems?.reduce((acc, item) => acc + (item?.quantity ?? 0), 0) ?? 0,
     lines: cartItems,
   };
 }
