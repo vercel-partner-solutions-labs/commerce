@@ -357,7 +357,6 @@ async function searchProducts(options: {
   sortKey?: string;
   limit?: number;
 }) {
-  console.log("searchProducts", options);
   const { query, categoryId, sortKey = defaultSort.sortKey, limit = 100 } = options;
   const config = await getGuestUserConfig();
 

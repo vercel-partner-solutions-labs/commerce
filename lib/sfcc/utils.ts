@@ -1,16 +1,18 @@
-import { isSFCCError } from './type-guards';
+import { isSFCCError } from "./type-guards";
 
-export type ExtractVariables<T> = T extends { variables: object } ? T['variables'] : never;
+export type ExtractVariables<T> = T extends { variables: object }
+  ? T["variables"]
+  : never;
 
 export async function salesforceFetch<T>({
   method,
-  cache = 'force-cache',
+  cache = "force-cache",
   headers,
   tags,
   variables,
-  apiEndpoint
+  apiEndpoint,
 }: {
-  method: 'POST' | 'GET';
+  method: "POST" | "GET";
   apiEndpoint: string;
   cache?: RequestCache;
   headers?: HeadersInit;
@@ -21,14 +23,14 @@ export async function salesforceFetch<T>({
     const fetchOptions: RequestInit = {
       method,
       headers: {
-        'Content-Type': 'application/json',
-        ...headers
+        "Content-Type": "application/json",
+        ...headers,
       },
       cache,
-      ...(tags && { next: { tags } })
+      ...(tags && { next: { tags } }),
     };
 
-    if (method === 'POST' && variables) {
+    if (method === "POST" && variables) {
       fetchOptions.body = JSON.stringify({ variables });
     }
 
@@ -42,34 +44,34 @@ export async function salesforceFetch<T>({
 
     return {
       status: res.status,
-      body
+      body,
     };
   } catch (e) {
     if (isSFCCError(e)) {
       throw {
-        version: e._v || 'unknown',
+        version: e._v || "unknown",
         fault: e?.fault || {},
-        apiEndpoint
+        apiEndpoint,
       };
     }
 
     throw {
-      error: e
+      error: e,
     };
   }
 }
 
 export const validateEnvironmentVariables = () => {
   const requiredEnvironmentVariables = [
-    'SITE_NAME',
-    'SFCC_CLIENT_ID',
-    'SFCC_ORGANIZATIONID',
-    'SFCC_SECRET',
-    'SFCC_SHORTCODE',
-    'SFCC_SITEID',
-    'SFCC_SANDBOX_DOMAIN',
-    'SFCC_OPENCOMMERCE_SHOP_API_ENDPOINT',
-    'SFCC_REVALIDATION_SECRET'
+    "SITE_NAME",
+    "SFCC_CLIENT_ID",
+    "SFCC_ORGANIZATIONID",
+    "SFCC_SECRET",
+    "SFCC_SHORTCODE",
+    "SFCC_SITEID",
+    "SFCC_SANDBOX_DOMAIN",
+    "SFCC_OPENCOMMERCE_SHOP_API_ENDPOINT",
+    "SFCC_REVALIDATION_SECRET",
   ];
   const missingEnvironmentVariables = [] as string[];
 
@@ -82,7 +84,7 @@ export const validateEnvironmentVariables = () => {
   if (missingEnvironmentVariables.length) {
     throw new Error(
       `The following environment variables are missing. Your site will not work without them. Read more: https://vercel.com/docs/integrations/salesforce-commerce-cloud#configure-environment-variables\n\n${missingEnvironmentVariables.join(
-        '\n'
+        "\n"
       )}\n`
     );
   }
