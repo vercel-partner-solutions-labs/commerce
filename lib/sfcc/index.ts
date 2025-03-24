@@ -502,7 +502,6 @@ function reshapeProduct(product: ShopperProductsTypes.Product) {
           return {
             id: attribute.id,
             name: attribute.name!,
-            // TODO: might be a better way to do this, we are providing the name as the value
             values:
               attribute.values
                 ?.filter((v) => v.value !== undefined)
