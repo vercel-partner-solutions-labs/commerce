@@ -61,14 +61,14 @@ export const getProduct = cache(
 export const getCollectionProducts = cache(
   async ({
     collection,
-    reverse,
+    limit,
     sortKey,
   }: {
     collection: string;
-    reverse?: boolean;
+    limit?: number;
     sortKey?: string;
   }) => {
-    return await searchProducts({ categoryId: collection, sortKey });
+    return await searchProducts({ categoryId: collection, limit, sortKey });
   },
   ["get-collection-products"],
   { tags: [TAGS.products, TAGS.collections] }
@@ -262,7 +262,7 @@ export async function getProductRecommendations(productId: string) {
 
   if (!categoryId) return [];
 
-  const products = await searchProducts({ categoryId, limit: 11 });
+  const products = await getCollectionProducts({ collection: categoryId, limit: 11 });
 
   // Filter out the product we're already looking at.
   return products.filter((product) => product.id !== productId);
