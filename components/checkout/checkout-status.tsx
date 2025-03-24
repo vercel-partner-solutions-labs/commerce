@@ -46,10 +46,15 @@ export function CheckoutStatus({
   return (
     <Card>
       {order && (
-        <CardHeader className="border-b border-neutral-800">
-          <CardTitle>Your order is confirmed</CardTitle>
-          <CardDescription>You'll receive a confirmation email shortly.</CardDescription>
-        </CardHeader>
+        <>
+          <CardHeader>
+            <CardTitle>Your order is confirmed</CardTitle>
+            <CardDescription>
+              You'll receive a confirmation email shortly.
+            </CardDescription>
+          </CardHeader>
+          <Separator />
+        </>
       )}
       <CardContent className="p-6 flex flex-col gap-4">
         {customerEmail && checkoutStep > CheckoutStep.Information && (

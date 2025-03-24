@@ -19,7 +19,7 @@ export function CheckoutCrumbs() {
       return `text-white font-medium`;
     }
     if (step < currentStep) {
-      return `text-blue-600 hover:text-blue-700 cursor-pointer`;
+      return `text-gray-400 hover:text-gray-300 underline underline-offset-2 cursor-pointer`;
     }
     return `text-gray-400 pointer-events-none`;
   };
