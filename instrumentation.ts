@@ -1,5 +1,5 @@
 export async function register() {
-  if (process.env.NEXT_RUNTIME === "node") {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
     const requiredEnvironmentVariables = [
       "SITE_NAME",
       "SFCC_CLIENT_ID",
