@@ -17,7 +17,7 @@ export async function CollapsibleSummary() {
 
   return (
     <Collapsible
-      className="border-t border-b sm:border sm:rounded-lg border-neutral-200 dark:border-neutral-800 dark:bg-neutral-950/30"
+      className="border-t border-b sm:border sm:rounded-lg border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950/30"
       defaultOpen={false}
     >
       <CollapsibleTrigger className="group flex w-full items-center justify-between p-4 text-left">
