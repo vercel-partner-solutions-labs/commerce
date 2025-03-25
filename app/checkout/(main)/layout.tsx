@@ -2,6 +2,7 @@ import { CartSummary } from "@/components/checkout/checkout-cart";
 import { CheckoutProvider } from "@/components/checkout/checkout-context";
 import { CheckoutCrumbs } from "@/components/checkout/checkout-crumbs";
 import { CheckoutError } from "@/components/checkout/checkout-error";
+import { CollapsibleSummary } from "@/components/checkout/collapsible-summary";
 import { LoadingCart } from "@/components/checkout/loading-cart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
@@ -10,8 +11,13 @@ export default async function CheckoutLayout({ children }: React.PropsWithChildr
   return (
     <CheckoutProvider>
       <div className="container mx-auto p-4 md:p-8">
-        <div className="mb-6 flex flex-col gap-5">
+        <div className="mb-6 flex flex-col gap-4 md:gap-5">
           <h1 className="text-2xl font-bold">Checkout</h1>
+
+          <div className="md:hidden mb-3 -mx-4 sm:mx-0">
+            <CollapsibleSummary />
+          </div>
+
           <CheckoutCrumbs />
         </div>
 
@@ -21,16 +27,18 @@ export default async function CheckoutLayout({ children }: React.PropsWithChildr
             {children}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Suspense fallback={<LoadingCart />}>
-                <CartSummary />
-              </Suspense>
-            </CardContent>
-          </Card>
+          <div className="hidden md:block">
+            <Card>
+              <CardHeader>
+                <CardTitle>Order Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={<LoadingCart />}>
+                  <CartSummary />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </CheckoutProvider>

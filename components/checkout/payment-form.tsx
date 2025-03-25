@@ -57,7 +57,7 @@ export function PaymentForm() {
   const errors = state?.errors?.fieldErrors;
 
   return (
-    <form action={formAction} className="flex flex-col gap-8">
+    <form action={formAction} className="space-y-6 md:space-y-8">
       <Card>
         <CardHeader>
           <CardTitle>Payment Information</CardTitle>
