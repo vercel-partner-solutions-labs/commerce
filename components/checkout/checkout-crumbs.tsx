@@ -16,7 +16,7 @@ export function CheckoutCrumbs() {
 
   const getLinkClasses = (step: CheckoutStep) => {
     if (currentStep === step) {
-      return `text-white font-medium`;
+      return `font-medium`;
     }
     if (step < currentStep) {
       return `text-gray-400 hover:text-gray-300 underline underline-offset-2 cursor-pointer`;
