@@ -6,6 +6,7 @@ import {
   placeOrder,
   updateBillingAddress,
 } from "@/components/checkout/actions";
+import { AddressForm } from "@/components/checkout/address-form";
 import { useCheckoutActionState } from "@/components/checkout/checkout-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -18,7 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { billingAddressSchema, paymentFormSchema } from "@/lib/schemas";
 import { months, years } from "@/lib/utils/cc-helpers";
+import clsx from "clsx";
+import { useState } from "react";
 import { useCart } from "../cart/cart-context";
 import LoadingDots from "../loading-dots";
 
@@ -27,34 +31,34 @@ import LoadingDots from "../loading-dots";
 
 export function PaymentForm() {
   const { cart } = useCart();
+  const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
 
-  const [state, formAction, pending] = useCheckoutActionState(
-    async (prevState, formData) => {
-      const paymentState = await addPaymentMethod(undefined, formData);
+  const [state, formAction, pending] = useCheckoutActionState<
+    typeof paymentFormSchema | typeof billingAddressSchema
+  >(async (prevState, formData) => {
+    const paymentState = await addPaymentMethod(undefined, formData);
 
-      if (paymentState) {
-        return paymentState;
-      }
-
-      if (formData.get("sameAsShipping") && cart?.shippingAddress) {
-        const billingFormData = new FormData();
-
-        Object.entries(cart.shippingAddress).forEach(([key, value]) => {
-          billingFormData.append(key, value || "");
-        });
-
-        const billingState = await updateBillingAddress(undefined, billingFormData);
-
-        if (billingState) {
-          return billingState;
-        }
-      }
-
-      return placeOrder(prevState, new FormData());
+    if (paymentState) {
+      return paymentState;
     }
-  );
+
+    const billingState = await updateBillingAddress(undefined, formData);
+
+    if (billingState) {
+      return billingState;
+    }
+
+    return placeOrder(prevState, new FormData());
+  });
+
+  const handleSameAsShippingChange = (checked: boolean) => {
+    setBillingSameAsShipping(checked);
+  };
 
   const errors = state?.errors?.fieldErrors;
+  const billingAddress = billingSameAsShipping
+    ? cart?.shippingAddress
+    : cart?.billingAddress;
 
   return (
     <form action={formAction} className="space-y-6 md:space-y-8">
@@ -166,19 +170,33 @@ export function PaymentForm() {
           <div className="space-y-1.5">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="sameAsShipping"
-                name="sameAsShipping"
+                id="billingSameAsShipping"
+                name="billingSameAsShipping"
                 disabled={pending}
-                defaultChecked
+                checked={billingSameAsShipping}
+                onCheckedChange={handleSameAsShippingChange}
               />
-              <Label htmlFor="sameAsShipping">Billing address same as shipping</Label>
+              <Label htmlFor="billingSameAsShipping">
+                Billing address same as shipping
+              </Label>
             </div>
-            {errors?.sameAsShipping && (
-              <p className="text-sm text-red-500">{errors.sameAsShipping[0]}</p>
+            {errors?.billingSameAsShipping && (
+              <p className="text-sm text-red-500">{errors.billingSameAsShipping[0]}</p>
             )}
           </div>
         </CardContent>
       </Card>
+
+      <div className={clsx({ hidden: billingSameAsShipping })}>
+        <AddressForm
+          key={String(billingSameAsShipping)}
+          title="Billing Address"
+          defaultValues={billingAddress}
+          errors={errors}
+          pending={pending}
+          prefix="billingAddress"
+        />
+      </div>
 
       <button
         className="block w-full rounded-full bg-blue-600 p-3 text-center text-sm font-medium text-white opacity-90 hover:opacity-100"

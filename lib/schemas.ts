@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { prefixSchema } from "./utils";
 
 // Base schema for address information
 export const addressFormSchema = z.object({
@@ -20,9 +21,6 @@ export const informationFormSchema = addressFormSchema.extend({
     .email("Please enter a valid email address"),
 });
 
-// Billing form schema is identical to the address schema
-export const billingFormSchema = addressFormSchema;
-
 export const shippingMethodFormSchema = z.object({
   shippingMethodId: z.string().min(1, "Shipping method is required"),
 });
@@ -33,4 +31,7 @@ export const paymentFormSchema = z.object({
   expirationMonth: z.string().min(1, "Expiration month is required"),
   expirationYear: z.string().min(1, "Expiration year is required"),
   securityCode: z.string().min(1, "Security code is required"),
+  billingSameAsShipping: z.enum(["on"]).optional(),
 });
+
+export const billingAddressSchema = prefixSchema(addressFormSchema, "billingAddress");
