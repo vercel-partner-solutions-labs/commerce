@@ -14,7 +14,7 @@ export default async function ShippingPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <CheckoutStatus />
       <Suspense fallback={<LoadingShippingMethods />}>
         <ShippingForm shippingMethodsPromise={shippingMethodsPromise} />

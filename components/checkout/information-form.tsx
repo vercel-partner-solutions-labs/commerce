@@ -31,7 +31,7 @@ export function InformationForm() {
   };
 
   return (
-    <form action={formAction} className="space-y-8">
+    <form action={formAction} className="space-y-6 md:space-y-8">
       <Card>
         <CardHeader>
           <CardTitle>Contact</CardTitle>
