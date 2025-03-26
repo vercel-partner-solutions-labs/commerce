@@ -1,5 +1,5 @@
 import { getCart } from "@/lib/sfcc";
-import { CartItem } from "@/lib/sfcc/types";
+import { Cart, CartItem, Order } from "@/lib/sfcc/types";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,18 +7,22 @@ import Price from "../price";
 import { buttonVariants } from "../ui/button";
 import { Separator } from "../ui/separator";
 
-export async function CheckoutCart() {
+export async function CartSummary() {
   const cart = await getCart();
 
   if (!cart || cart.lines.length === 0) {
     return <EmptyCart />;
   }
 
-  const { cost } = cart;
+  return <Summary data={cart} />;
+}
+
+export const Summary = ({ data }: { data: Cart | Order }) => {
+  const { cost } = data;
 
   return (
     <div className="space-y-4">
-      {cart.lines.map((line) => (
+      {data.lines.map((line) => (
         <Line key={line.id} line={line} />
       ))}
       <Separator />
@@ -38,7 +42,14 @@ export async function CheckoutCart() {
       </div>
       <div className="flex justify-between">
         <span>Shipping</span>
-        <span className="text-gray-400">Calculated during Shipping</span>
+        {cost.shippingAmount ? (
+          <Price
+            amount={cost.shippingAmount.amount}
+            currencyCode={cost.shippingAmount.currencyCode}
+          />
+        ) : (
+          <span className="text-gray-400">...</span>
+        )}
       </div>
       <div className="flex justify-between font-bold">
         <span>Total</span>
@@ -49,7 +60,7 @@ export async function CheckoutCart() {
       </div>
     </div>
   );
-}
+};
 
 function EmptyCart() {
   return (
@@ -59,11 +70,7 @@ function EmptyCart() {
       <p className="text-center text-sm text-gray-500">
         Looks like you haven't added any items to your cart yet.
       </p>
-      <Link
-        href="/"
-        prefetch
-        className={buttonVariants({ variant: "outline" })}
-      >
+      <Link href="/" prefetch className={buttonVariants({ variant: "outline" })}>
         Continue Shopping
       </Link>
     </div>

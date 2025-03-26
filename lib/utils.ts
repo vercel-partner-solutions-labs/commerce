@@ -17,10 +17,17 @@ export const createUrl = (
 };
 
 export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
-  stringToCheck.startsWith(startsWith)
-    ? stringToCheck
-    : `${startsWith}${stringToCheck}`;
+  stringToCheck.startsWith(startsWith) ? stringToCheck : `${startsWith}${stringToCheck}`;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+// Helper for returning the expected error state to actions instead of throwing.
+export const handleFormActionError = (error: unknown, defaultMessage: string) => {
+  return {
+    errors: {
+      formErrors: [(error as Error)?.message || defaultMessage],
+    },
+  };
+};

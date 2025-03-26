@@ -1,31 +1,17 @@
-export interface SFCCErrorLike {
-  _v?: string;
-  fault?: {
-    arguments?: unknown;
-    type?: string;
-    message?: string;
-  };
-}
-
-export const isObject = (object: unknown): object is Record<string, unknown> => {
-  return typeof object === 'object' && object !== null && !Array.isArray(object);
+type SDKResponseError = {
+  response?: Response;
 };
 
-export const isSFCCError = (error: unknown): error is SFCCErrorLike => {
-  console.log({ error });
-  if (!isObject(error)) return false;
+export async function ensureSDKResponseError(
+  error: unknown,
+  defaultMessage?: string
+): Promise<string | undefined> {
+  // The commerce sdk is configured to throw with a custom object containing the original response for any 400 or 500 status.
+  // See https://github.com/SalesforceCommerceCloud/commerce-sdk-isomorphic/tree/main?tab=readme-ov-file#throwonbadresponse
+  const sdkError = error as SDKResponseError;
 
-  if (error instanceof Error) return true;
-
-  return findError(error);
-};
-
-function findError<T extends object>(error: T): boolean {
-  if (Object.prototype.toString.call(error) === '[object Error]') {
-    return true;
+  if (sdkError.response) {
+    const errorData = await sdkError.response.json();
+    return errorData?.detail || defaultMessage;
   }
-
-  const prototype = Object.getPrototypeOf(error) as T | null;
-
-  return prototype === null ? false : findError(prototype);
 }

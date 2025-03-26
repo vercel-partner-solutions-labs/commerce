@@ -1,17 +1,29 @@
+import { getCardType, maskCardNumber } from "@/lib/utils/cc-helpers";
 import {
   helpers,
   ShopperBaskets,
   ShopperBasketsTypes,
   ShopperLogin,
+  ShopperOrders,
+  ShopperOrdersTypes,
   ShopperProducts,
-  ShopperProductsTypes,
   ShopperSearch,
 } from "commerce-sdk-isomorphic";
 import { defaultSort, storeCatalog, TAGS } from "lib/constants";
 import { unstable_cache as cache, revalidateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { Cart, CartItem, Collection, Image, Product, SdkError } from "./types";
+import {
+  reshapeBasket,
+  reshapeCategories,
+  reshapeOrder,
+  reshapeProduct,
+  reshapeProductItem,
+  reshapeProducts,
+  reshapeShippingMethods,
+} from "./reshape";
+import { ensureSDKResponseError } from "./type-guards";
+import { CartItem, Product, SortedProductResult } from "./types";
 
 const apiConfig = {
   throwOnBadResponse: true,
@@ -21,11 +33,6 @@ const apiConfig = {
     shortCode: process.env.SFCC_SHORTCODE || "",
     siteId: process.env.SFCC_SITEID || "",
   },
-};
-
-type SortedProductResult = {
-  productResult: ShopperProductsTypes.Product;
-  index: number;
 };
 
 export const getCollections = cache(
@@ -38,10 +45,9 @@ export const getCollections = cache(
   }
 );
 
-export function getCollection(handle: string) {
-  return getCollections().then((collections) =>
-    collections.find((c) => c.handle === handle)
-  );
+export async function getCollection(handle: string) {
+  const collections = await getCollections();
+  return collections.find((c) => c.handle === handle);
 }
 
 export const getProduct = cache(
@@ -110,7 +116,7 @@ export async function createCart() {
   return reshapeBasket(createdBasket, cartItems);
 }
 
-export async function getCart(): Promise<Cart | undefined> {
+export async function getCart() {
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -248,7 +254,7 @@ export async function updateCart(
 }
 
 export async function getProductRecommendations(productId: string) {
-  // This Shopper APIs do not provide a recommendation service. This is typically
+  // The Shopper APIs do not provide a recommendation service. This is typically
   // done through Einstein, which isn't available in this environment.
   // For now, we refetch the product and use the categoryId to get recommendations.
   // This fills the need for now and doesn't require changes to the UI.
@@ -304,14 +310,8 @@ async function getGuestUserAuthToken() {
       { clientSecret: process.env.SFCC_SECRET || "" }
     );
   } catch (e) {
-    // The commerce sdk is configured to throw a custom error for any 400 or 500 response.
-    // See https://github.com/SalesforceCommerceCloud/commerce-sdk-isomorphic/tree/main?tab=readme-ov-file#throwonbadresponse
-    const sdkError = e as SdkError;
-    if (sdkError.response) {
-      const error = await sdkError.response.json();
-      throw error;
-    }
-    throw new Error("Failed to retrieve access token");
+    const error = await ensureSDKResponseError(e, "Failed to retrieve access token");
+    throw new Error(error);
   }
 }
 
@@ -422,213 +422,217 @@ async function getCartItems(createdBasket: ShopperBasketsTypes.Basket) {
   return cartItems;
 }
 
-function reshapeCategory(
-  category: ShopperProductsTypes.Category
-): Collection | undefined {
-  if (!category) {
-    return undefined;
-  }
+export async function updateCustomerInfo(email: string) {
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
 
-  return {
-    handle: category.id,
-    title: category.name || "",
-    description: category.description || "",
-    seo: {
-      title: category.pageTitle || "",
-      description: category.description || "",
-    },
-    updatedAt: "",
-    path: `/search/${category.id}`,
-  };
-}
+  try {
+    const basketClient = new ShopperBaskets(config);
 
-function reshapeCategories(categories: ShopperProductsTypes.Category[]) {
-  const reshapedCategories = [];
-  for (const category of categories) {
-    if (category) {
-      const reshapedCategory = reshapeCategory(category);
-      if (reshapedCategory) {
-        reshapedCategories.push(reshapedCategory);
-      }
-    }
-  }
-  return reshapedCategories;
-}
-
-function reshapeProduct(product: ShopperProductsTypes.Product) {
-  if (!product.name) {
-    throw new Error("Product name is not set");
-  }
-
-  const images = reshapeImages(product.imageGroups);
-
-  if (!images[0]) {
-    throw new Error("Product image is not set");
-  }
-
-  const flattenedPrices =
-    product.variants
-      ?.filter((variant) => variant.price !== undefined)
-      .reduce((acc: number[], variant) => [...acc, variant.price!], [])
-      .sort((a, b) => a - b) || [];
-
-  return {
-    id: product.id,
-    handle: product.id,
-    title: product.name,
-    description: product.shortDescription || "",
-    descriptionHtml: product.longDescription || "",
-    categoryId: product.primaryCategoryId,
-    tags: product["c_product-tags"] || [],
-    featuredImage: images[0],
-    // TODO: check dates for whether it is available
-    availableForSale: true,
-    priceRange: {
-      maxVariantPrice: {
-        // TODO: verify whether there is another property for this
-        amount: flattenedPrices[flattenedPrices.length - 1]?.toString() || "0",
-        currencyCode: product.currency || "USD",
+    await basketClient.updateCustomerForBasket({
+      parameters: {
+        basketId: cartId,
       },
-      minVariantPrice: {
-        amount: flattenedPrices[0]?.toString() || "0",
-        currencyCode: product.currency || "USD",
+      body: {
+        email: email,
       },
-    },
-    images: images,
-    options:
-      product.variationAttributes?.map(
-        (attribute: ShopperProductsTypes.VariationAttribute) => {
-          return {
-            id: attribute.id,
-            name: attribute.name!,
-            values:
-              attribute.values
-                ?.filter((v) => v.value !== undefined)
-                ?.map((v) => v.name!) || [],
-          };
-        }
-      ) || [],
-    seo: {
-      title: product.pageTitle || "",
-      description: product.pageDescription || "",
-    },
-    variants: reshapeVariants(product.variants || [], product),
-    updatedAt: product["c_updated-date"],
-  };
-}
-
-function reshapeProducts(products: ShopperProductsTypes.Product[]) {
-  const reshapedProducts = [];
-  for (const product of products) {
-    if (product) {
-      const reshapedProduct = reshapeProduct(product);
-      if (reshapedProduct) {
-        reshapedProducts.push(reshapedProduct);
-      }
-    }
+    });
+  } catch (e) {
+    const error = await ensureSDKResponseError(e, "Error updating basket email");
+    throw new Error(error);
   }
-  return reshapedProducts;
 }
 
-function reshapeImages(
-  imageGroups: ShopperProductsTypes.ImageGroup[] | undefined
-): Image[] {
-  if (!imageGroups) return [];
-
-  const largeGroup = imageGroups.filter((g) => g.viewType === "large");
-
-  const images = [...largeGroup].map((group) => group.images).flat();
-
-  return images.map((image) => {
-    return {
-      altText: image.alt!,
-      url: image.disBaseLink || image.link,
-      width: image.width || 800,
-      height: image.height || 800,
-    };
-  });
-}
-
-function reshapeVariants(
-  variants: ShopperProductsTypes.Variant[],
-  product: ShopperProductsTypes.Product
+export async function updateShippingAddress(
+  shippingAddress: ShopperBasketsTypes.OrderAddress
 ) {
-  return variants.map((variant) => reshapeVariant(variant, product));
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  try {
+    const basketClient = new ShopperBaskets(config);
+
+    // Use 'me' as the shipment ID, which refers to the current customer's default shipment
+    await basketClient.updateShippingAddressForShipment({
+      parameters: {
+        basketId: cartId,
+        shipmentId: "me",
+      },
+      body: shippingAddress,
+    });
+  } catch (e) {
+    const error = await ensureSDKResponseError(
+      e,
+      "Error updating basket shipping address"
+    );
+    throw new Error(error);
+  }
 }
 
-function reshapeVariant(
-  variant: ShopperProductsTypes.Variant,
-  product: ShopperProductsTypes.Product
+export async function updateBillingAddress(
+  billingAddress: ShopperBasketsTypes.OrderAddress
 ) {
-  return {
-    id: variant.productId,
-    title: product.name || "",
-    availableForSale: variant.orderable || false,
-    selectedOptions:
-      Object.entries(variant.variationValues || {}).map(([key, value]) => ({
-        // TODO: we use the name here instead of the key because the frontend only uses names
-        name: product.variationAttributes?.find((attr) => attr.id === key)?.name || key,
-        // TODO: might be a cleaner way to do this, we need to look up the name on the list of values from the variationAttributes
-        value:
-          product.variationAttributes
-            ?.find((attr) => attr.id === key)
-            ?.values?.find((v) => v.value === value)?.name || "",
-      })) || [],
-    price: {
-      amount: variant.price?.toString() || "0",
-      currencyCode: product.currency || "USD",
-    },
-  };
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  try {
+    const basketClient = new ShopperBaskets(config);
+
+    await basketClient.updateBillingAddressForBasket({
+      parameters: {
+        basketId: cartId,
+      },
+      body: billingAddress,
+    });
+  } catch (e) {
+    const error = await ensureSDKResponseError(
+      e,
+      "Error updating basket billing address"
+    );
+    throw new Error(error);
+  }
 }
 
-function reshapeProductItem(
-  item: ShopperBasketsTypes.ProductItem,
-  currency: string,
-  matchingProduct: Product
-): CartItem {
-  return {
-    id: item.itemId || "",
-    quantity: item.quantity || 0,
-    cost: {
-      totalAmount: {
-        amount: item.price?.toString() || "0",
-        currencyCode: currency,
+export async function updateShippingMethod(shippingMethodId: string) {
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  try {
+    const basketClient = new ShopperBaskets(config);
+
+    // Use 'me' as the shipment ID, which refers to the current customer's default shipment
+    await basketClient.updateShippingMethodForShipment({
+      parameters: {
+        basketId: cartId,
+        shipmentId: "me",
       },
-    },
-    merchandise: {
-      id: item.productId || "",
-      title: item.productName || "",
-      selectedOptions:
-        item.optionItems?.map((o) => {
-          return {
-            name: o.optionId!,
-            value: o.optionValueId!,
-          };
-        }) || [],
-      product: matchingProduct,
-    },
-  };
+      body: {
+        id: shippingMethodId,
+      },
+    });
+  } catch (e) {
+    const error = await ensureSDKResponseError(e, "Error updating shipping method");
+    throw new Error(error);
+  }
 }
 
-function reshapeBasket(basket: ShopperBasketsTypes.Basket, cartItems: CartItem[]): Cart {
-  return {
-    id: basket.basketId!,
-    checkoutUrl: "/checkout",
-    cost: {
-      subtotalAmount: {
-        amount: basket.productSubTotal?.toString() || "0",
-        currencyCode: basket.currency || "USD",
+export async function addPaymentMethod(paymentData: {
+  cardNumber: string;
+  cardholderName: string;
+  expirationMonth: number;
+  expirationYear: number;
+  securityCode: string;
+}) {
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  try {
+    const basketClient = new ShopperBaskets(config);
+
+    // Using the simplest example with credit card payment type for demo purposes.
+    // Real implementations might also incorporate 3p payment providers as well.
+    await basketClient.addPaymentInstrumentToBasket({
+      parameters: {
+        basketId: cartId,
       },
-      totalAmount: {
-        amount: `${(basket.productSubTotal ?? 0) + (basket.merchandizeTotalTax ?? 0)}`,
-        currencyCode: basket.currency || "USD",
+      body: {
+        amount: 0, // Calculated by server based on basket total
+        paymentMethodId: "CREDIT_CARD",
+        paymentCard: {
+          cardType: getCardType(paymentData.cardNumber),
+          maskedNumber: maskCardNumber(paymentData.cardNumber),
+          expirationMonth: paymentData.expirationMonth,
+          expirationYear: paymentData.expirationYear,
+        },
       },
-      totalTaxAmount: {
-        amount: basket.merchandizeTotalTax?.toString() || "0",
-        currencyCode: basket.currency || "USD",
+    });
+
+    // In a real implementation, the security code would be handled by the payment processor
+    // and not stored in the commerce system
+  } catch (e) {
+    const error = await ensureSDKResponseError(
+      e,
+      "Error adding payment instrument to basket"
+    );
+    throw new Error(error);
+  }
+}
+
+export async function getShippingMethods() {
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  try {
+    const basketClient = new ShopperBaskets(config);
+
+    // Use 'me' as the shipment ID, which refers to the current customer's default shipment
+    const shippingMethods = await basketClient.getShippingMethodsForShipment({
+      parameters: {
+        basketId: cartId,
+        shipmentId: "me",
       },
-    },
-    totalQuantity: cartItems?.reduce((acc, item) => acc + (item?.quantity ?? 0), 0) ?? 0,
-    lines: cartItems,
-  };
+    });
+
+    return reshapeShippingMethods(shippingMethods);
+  } catch (e) {
+    const error = await ensureSDKResponseError(e, "Error fetching shipping methods");
+    throw new Error(error);
+  }
+}
+
+export async function placeOrder() {
+  const cartId = (await cookies()).get("cartId")?.value!;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  try {
+    const ordersClient = new ShopperOrders(config);
+
+    // NOTE: Need to cast to the proper type. Looks like a bug in the SDK's typedefs.
+    const order = (await ordersClient.createOrder({
+      body: { basketId: cartId },
+    })) as ShopperOrdersTypes.Order;
+
+    const cartItems = await getCartItems(order);
+    return reshapeOrder(order, cartItems);
+  } catch (e) {
+    const error = await ensureSDKResponseError(e, "Error placing order");
+    throw new Error(error);
+  }
+}
+
+export async function getCheckoutOrder() {
+  const orderId = (await cookies()).get("orderId")?.value;
+  const guestToken = (await cookies()).get("guest_token")?.value;
+  const config = await getGuestUserConfig(guestToken);
+
+  if (!orderId) {
+    return;
+  }
+
+  try {
+    const ordersClient = new ShopperOrders(config);
+
+    // NOTE: Need to cast to the proper type. Looks like a bug in the SDK's typedefs.
+    const order = (await ordersClient.getOrder({
+      parameters: {
+        orderNo: orderId,
+      },
+    })) as ShopperOrdersTypes.Order;
+
+    const cartItems = await getCartItems(order);
+    return reshapeOrder(order, cartItems);
+  } catch (e) {
+    const sdkError = await ensureSDKResponseError(e);
+    if (sdkError) {
+      return;
+    }
+    throw e;
+  }
 }
