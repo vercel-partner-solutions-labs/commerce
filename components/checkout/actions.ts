@@ -2,7 +2,7 @@
 
 import { FormActionState, TAGS } from "@/lib/constants";
 import {
-  addressFormSchema,
+  billingAddressSchema,
   informationFormSchema,
   paymentFormSchema,
   shippingMethodFormSchema,
@@ -110,8 +110,8 @@ export async function addPaymentMethod(
 export async function updateBillingAddress(
   prevState: FormActionState,
   formData: FormData
-): Promise<FormActionState<typeof addressFormSchema>> {
-  const { success, error, data } = addressFormSchema.safeParse(
+): Promise<FormActionState<typeof billingAddressSchema>> {
+  const { success, error, data } = billingAddressSchema.safeParse(
     Object.fromEntries(formData.entries())
   );
 
@@ -121,14 +121,14 @@ export async function updateBillingAddress(
 
   try {
     await api.updateBillingAddress({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      address1: data.address1,
-      address2: data.address2,
-      city: data.city,
-      stateCode: data.state,
-      postalCode: data.zip,
-      countryCode: data.country,
+      firstName: data["billingAddress.firstName"],
+      lastName: data["billingAddress.lastName"],
+      address1: data["billingAddress.address1"],
+      address2: data["billingAddress.address2"],
+      city: data["billingAddress.city"],
+      stateCode: data["billingAddress.state"],
+      postalCode: data["billingAddress.zip"],
+      countryCode: data["billingAddress.country"],
     });
 
     revalidateTag(TAGS.cart);

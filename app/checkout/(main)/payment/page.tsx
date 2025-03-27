@@ -14,7 +14,7 @@ export default async function PaymentPage() {
   // for the site. For demo purposes, we are only handling credit card payments.
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <CheckoutStatus />
       <PaymentForm />
     </div>
