@@ -5,7 +5,7 @@ import {
   formatCreditCardNumber,
   getCardType,
   stripCardFormatting,
-} from "@/lib/utils/cc-helpers";
+} from "@/lib/utils/form-helpers";
 import { CreditCard } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { AmexIcon, DiscoverIcon, MasterCardIcon, VisaIcon } from "./icons/cc-icons";
@@ -24,7 +24,7 @@ interface CreditCardInputProps
 export function CreditCardInput({
   id,
   name,
-  placeholder = "4111 1111 1111 1111",
+  placeholder,
   required = false,
   disabled = false,
   error,

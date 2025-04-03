@@ -1,3 +1,4 @@
+import { PostalCodeInput } from "@/components/postal-code-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { addressFormSchema } from "@/lib/schemas";
+import { useState } from "react";
 import { z } from "zod";
 
 type AddressData = z.infer<typeof addressFormSchema>;
@@ -30,6 +32,13 @@ export function AddressForm({
   prefix = "",
 }: AddressFormProps) {
   const getFieldName = (name: string) => (prefix ? `${prefix}.${name}` : name);
+  const [selectedCountry, setSelectedCountry] = useState<string>(
+    defaultValues.country || "US"
+  );
+
+  const handleCountryChange = (value: string) => {
+    setSelectedCountry(value);
+  };
 
   return (
     <Card>
@@ -190,37 +199,25 @@ export function AddressForm({
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor={getFieldName("zip")}>ZIP Code</Label>
-            <Input
-              id={getFieldName("zip")}
-              name={getFieldName("zip")}
-              placeholder=""
-              required
-              disabled={pending}
-              defaultValue={defaultValues.zip}
-              aria-invalid={errors?.[getFieldName("zip")] ? "true" : "false"}
-              aria-errormessage={
-                errors?.[getFieldName("zip")] ? `${getFieldName("zip")}-error` : undefined
-              }
-            />
-            {errors?.[getFieldName("zip")] && (
-              <p
-                id={`${getFieldName("zip")}-error`}
-                className="text-sm text-red-500"
-                role="alert"
-              >
-                {errors[getFieldName("zip")]![0]}
-              </p>
-            )}
-          </div>
+          <PostalCodeInput
+            id={getFieldName("zip")}
+            name={getFieldName("zip")}
+            country={selectedCountry as "US" | "CA" | "UK"}
+            defaultValue={defaultValues.zip}
+            disabled={pending}
+            required
+            error={
+              errors?.[getFieldName("zip")] ? errors[getFieldName("zip")]![0] : undefined
+            }
+          />
           <div className="space-y-1.5">
             <Label htmlFor={getFieldName("country")}>Country</Label>
             <Select
               name={getFieldName("country")}
               required
               disabled={pending}
-              defaultValue={defaultValues.country}
+              defaultValue={defaultValues.country || "US"}
+              onValueChange={handleCountryChange}
               aria-invalid={errors?.[getFieldName("country")] ? "true" : "false"}
               aria-errormessage={
                 errors?.[getFieldName("country")]
