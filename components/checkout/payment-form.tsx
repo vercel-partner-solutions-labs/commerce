@@ -155,6 +155,7 @@ export function PaymentForm() {
                 placeholder="123"
                 maxLength={4}
                 required
+                inputMode="numeric"
                 aria-invalid={errors?.securityCode ? "true" : "false"}
                 aria-errormessage={
                   errors?.securityCode ? "securityCode-error" : undefined
@@ -162,7 +163,9 @@ export function PaymentForm() {
                 disabled={pending}
               />
               {errors?.securityCode && (
-                <p className="text-sm text-red-500">{errors.securityCode[0]}</p>
+                <p id="securityCode-error" className="text-sm text-red-500" role="alert">
+                  {errors.securityCode[0]}
+                </p>
               )}
             </div>
           </div>

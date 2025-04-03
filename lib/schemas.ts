@@ -26,12 +26,19 @@ export const shippingMethodFormSchema = z.object({
 });
 
 export const paymentFormSchema = z.object({
-  cardholderName: z.string().min(1, "Cardholder name is required"),
+  cardholderName: z
+    .string()
+    .min(1, "Cardholder name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Cardholder name should only contain letters and spaces"),
   cardNumber: z.string().min(1, "Card number is required"),
   expirationMonth: z.string().min(1, "Expiration month is required"),
   expirationYear: z.string().min(1, "Expiration year is required"),
-  securityCode: z.string().min(1, "Security code is required"),
   billingSameAsShipping: z.enum(["on"]).optional(),
+  securityCode: z
+    .string()
+    .min(1, "Security code is required")
+    .regex(/^\d{3,4}$/, "Security code must be 3-4 digits")
+    .refine((val) => /^\d+$/.test(val), "Security code must contain only numbers"),
 });
 
 export const billingAddressSchema = prefixSchema(addressFormSchema, "billingAddress");

@@ -107,24 +107,25 @@ export function reshapeProduct(product: ShopperProductsTypes.Product) {
     },
     images: images,
     options:
-      product.variationAttributes?.map(
-        (attribute: ShopperProductsTypes.VariationAttribute) => {
-          return {
-            id: attribute.id,
-            name: attribute.name!,
-            // TODO: might be a better way to do this, we are providing the name as the value
-            values:
-              attribute.values
-                ?.filter((v) => v.value !== undefined)
-                ?.map((v) => v.name!) || [],
-          };
-        }
-      ) || [],
+      product.variationAttributes?.map((attribute) => {
+        return {
+          id: attribute.id,
+          name: attribute.name!,
+          values:
+            attribute.values
+              ?.filter((v) => v.value !== undefined)
+              ?.map((v) => ({
+                id: v.value!,
+                name: v.name!,
+              })) || [],
+        };
+      }) || [],
     seo: {
       title: product.pageTitle || "",
       description: product.pageDescription || "",
     },
     variants: reshapeVariants(product.variants || [], product),
+    variationValues: product.variationValues,
     updatedAt: product["c_updated-date"],
   };
 }
@@ -211,12 +212,13 @@ export function reshapeProductItem(
       id: item.productId || "",
       title: item.productName || "",
       selectedOptions:
-        item.optionItems?.map((o) => {
-          return {
-            name: o.optionId!,
-            value: o.optionValueId!,
-          };
-        }) || [],
+        Object.entries(matchingProduct.variationValues || {}).map(([key, value]) => ({
+          name: matchingProduct.options?.find((opt) => opt.id === key)?.name || key,
+          value:
+            matchingProduct.options
+              ?.find((opt) => opt.id === key)
+              ?.values?.find((v) => v.id === value)?.name || String(value),
+        })) || [],
       product: matchingProduct,
     },
   };

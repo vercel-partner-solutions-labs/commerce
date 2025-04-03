@@ -89,7 +89,16 @@ function Line({ line }: { line: CartItem }) {
       />
       <div className="flex-grow">
         <h3 className="font-semibold">{line.merchandise.title}</h3>
-        {/* <p className="text-sm text-gray-500">{line.merchandise.product.description}</p> */}
+        {line.merchandise.selectedOptions &&
+          line.merchandise.selectedOptions.length > 0 && (
+            <div className="mt-1 text-sm text-gray-500">
+              {line.merchandise.selectedOptions.map((option, index) => (
+                <div key={`${option.name}-${index}`}>
+                  {option.name}: {option.value}
+                </div>
+              ))}
+            </div>
+          )}
       </div>
       <div className="text-right">
         <div className="font-semibold">
