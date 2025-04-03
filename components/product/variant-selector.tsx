@@ -26,8 +26,8 @@ export function VariantSelector({
   useEffect(() => {
     const colorOption = options.find((option) => option.name.toLowerCase() === "color");
 
-    if (colorOption && colorOption.values.length === 1) {
-      const colorValue = colorOption.values[0];
+    if (colorOption && colorOption.values.length === 1 && colorOption.values[0]) {
+      const colorValue = colorOption.values[0].name;
       if (colorValue && !state["color"]) {
         startTransition(() => {
           const newState = updateOption("color", colorValue);
@@ -62,13 +62,14 @@ export function VariantSelector({
             const optionNameLowerCase = option.name.toLowerCase();
 
             // Base option params on current selectedOptions so we can preserve any other param state.
-            const optionParams = { ...state, [optionNameLowerCase]: value };
+            const optionParams = { ...state, [optionNameLowerCase]: value.name };
 
             // Filter out invalid options and check if the option combination is available for sale.
             const filtered = Object.entries(optionParams).filter(([key, value]) =>
               options.find(
                 (option) =>
-                  option.name.toLowerCase() === key && option.values.includes(value)
+                  option.name.toLowerCase() === key &&
+                  option.values.some((val) => val.name === value)
               )
             );
             const isAvailableForSale = combinations.find((combination) =>
@@ -79,18 +80,18 @@ export function VariantSelector({
             );
 
             // The option is active if it's in the selected options.
-            const isActive = state[optionNameLowerCase] === value;
+            const isActive = state[optionNameLowerCase] === value.name;
 
             return (
               <button
                 formAction={() => {
-                  const newState = updateOption(optionNameLowerCase, value);
+                  const newState = updateOption(optionNameLowerCase, value.name);
                   updateURL(newState);
                 }}
-                key={value}
+                key={value.id}
                 aria-disabled={!isAvailableForSale}
                 disabled={!isAvailableForSale}
-                title={`${option.name} ${value}${!isAvailableForSale ? " (Out of Stock)" : ""}`}
+                title={`${option.name} ${value.name}${!isAvailableForSale ? " (Out of Stock)" : ""}`}
                 className={clsx(
                   "flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm dark:border-neutral-800 dark:bg-neutral-900",
                   {
@@ -102,7 +103,7 @@ export function VariantSelector({
                   }
                 )}
               >
-                {value}
+                {value.name}
               </button>
             );
           })}
