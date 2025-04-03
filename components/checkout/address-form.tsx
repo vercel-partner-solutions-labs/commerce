@@ -43,7 +43,7 @@ export function AddressForm({
             <Input
               id={getFieldName("firstName")}
               name={getFieldName("firstName")}
-              placeholder="John"
+              placeholder=""
               required
               disabled={pending}
               defaultValue={defaultValues.firstName}
@@ -69,7 +69,7 @@ export function AddressForm({
             <Input
               id={getFieldName("lastName")}
               name={getFieldName("lastName")}
-              placeholder="Doe"
+              placeholder=""
               required
               disabled={pending}
               defaultValue={defaultValues.lastName}
@@ -96,7 +96,7 @@ export function AddressForm({
           <Input
             id={getFieldName("address1")}
             name={getFieldName("address1")}
-            placeholder="123 Main St"
+            placeholder=""
             required
             disabled={pending}
             defaultValue={defaultValues.address1}
@@ -141,7 +141,7 @@ export function AddressForm({
             <Input
               id={getFieldName("city")}
               name={getFieldName("city")}
-              placeholder="Chicago"
+              placeholder=""
               required
               disabled={pending}
               defaultValue={defaultValues.city}
@@ -167,7 +167,7 @@ export function AddressForm({
             <Input
               id={getFieldName("state")}
               name={getFieldName("state")}
-              placeholder="Illinois"
+              placeholder=""
               required
               disabled={pending}
               defaultValue={defaultValues.state}
@@ -195,7 +195,7 @@ export function AddressForm({
             <Input
               id={getFieldName("zip")}
               name={getFieldName("zip")}
-              placeholder="60606"
+              placeholder=""
               required
               disabled={pending}
               defaultValue={defaultValues.zip}

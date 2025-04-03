@@ -72,7 +72,6 @@ export function PaymentForm() {
             <Input
               id="cardholderName"
               name="cardholderName"
-              placeholder="John Doe"
               required
               aria-invalid={errors?.cardholderName ? "true" : "false"}
               aria-errormessage={
@@ -152,7 +151,6 @@ export function PaymentForm() {
               <Input
                 id="securityCode"
                 name="securityCode"
-                placeholder="123"
                 maxLength={4}
                 required
                 inputMode="numeric"

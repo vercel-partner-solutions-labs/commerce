@@ -33,10 +33,11 @@ export function InformationForm() {
         <CardContent className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
           <Input
+            autoFocus={!defaultValues.customerEmail}
             id="email"
             name="email"
             type="email"
-            placeholder="jdoe@acme.com"
+            placeholder=""
             disabled={pending}
             required
             defaultValue={defaultValues.customerEmail}
