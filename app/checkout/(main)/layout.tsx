@@ -13,16 +13,15 @@ export default async function CheckoutLayout({ children }: React.PropsWithChildr
       <div className="container mx-auto p-4 md:p-8">
         <div className="mb-6 flex flex-col gap-4 md:gap-5">
           <h1 className="text-2xl font-bold">Checkout</h1>
-
-          <div className="md:hidden mb-3 -mx-4 sm:mx-0">
-            <CollapsibleSummary />
-          </div>
-
           <CheckoutCrumbs />
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 items-start">
           <div className="flex flex-col gap-6">
+            <div className="md:hidden">
+              <CollapsibleSummary />
+            </div>
+
             <CheckoutError />
             {children}
           </div>

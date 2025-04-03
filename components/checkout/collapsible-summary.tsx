@@ -17,7 +17,7 @@ export async function CollapsibleSummary() {
 
   return (
     <Collapsible
-      className="border-t border-b sm:border sm:rounded-lg border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950/30"
+      className="rounded-lg border border-neutral-200 bg-white text-neutral-950 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50"
       defaultOpen={false}
     >
       <CollapsibleTrigger className="group flex w-full items-center justify-between p-4 text-left">
@@ -34,7 +34,7 @@ export async function CollapsibleSummary() {
         />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="p-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+      <CollapsibleContent className="p-6  pt-0 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
         <Suspense fallback={<LoadingCart />}>
           <CartSummary />
         </Suspense>
