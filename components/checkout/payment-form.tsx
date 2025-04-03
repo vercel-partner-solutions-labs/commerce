@@ -70,7 +70,6 @@ export function PaymentForm() {
               name="cardholderName"
               placeholder="John Doe"
               required
-              pattern="[a-zA-Z\s]+"
               aria-invalid={errors?.cardholderName ? "true" : "false"}
               aria-errormessage={
                 errors?.cardholderName ? "cardholderName-error" : undefined
@@ -153,7 +152,6 @@ export function PaymentForm() {
                 maxLength={4}
                 required
                 inputMode="numeric"
-                pattern="\d{3,4}"
                 aria-invalid={errors?.securityCode ? "true" : "false"}
                 aria-errormessage={
                   errors?.securityCode ? "securityCode-error" : undefined
