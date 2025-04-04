@@ -119,3 +119,42 @@ export const years = Array.from({ length: 10 }, (_, i) => {
     label: year.toString(),
   };
 });
+
+// Format functions for different postal code types
+export const formatUSZip = (value: string): string => {
+  // Remove non-numeric characters
+  const nums = value.replace(/[^\d]/g, "");
+
+  // Format as XXXXX or XXXXX-XXXX
+  if (nums.length <= 5) {
+    return nums;
+  } else {
+    return `${nums.slice(0, 5)}-${nums.slice(5, 9)}`;
+  }
+};
+
+export const formatCAPostal = (value: string): string => {
+  // Remove non-alphanumeric characters
+  const cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+
+  // Format as A1A 1A1
+  if (cleaned.length <= 3) {
+    return cleaned;
+  } else {
+    return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)}`.trim();
+  }
+};
+
+export const formatUKPostcode = (value: string): string => {
+  // Remove non-alphanumeric characters and convert to uppercase
+  const cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+
+  // UK postcodes have variable length but generally split into outward + inward codes
+  if (cleaned.length <= 4) {
+    return cleaned;
+  } else {
+    // Split between outward code and inward code (last 3 characters)
+    const outwardLength = cleaned.length - 3;
+    return `${cleaned.slice(0, outwardLength)} ${cleaned.slice(outwardLength)}`.trim();
+  }
+};

@@ -84,3 +84,11 @@ export const checkoutStepRoutes: Record<CheckoutStep, string> = {
   [CheckoutStep.Payment]: "/checkout/payment",
   [CheckoutStep.Confirmation]: "/checkout/confirmation",
 };
+
+export type CountryCode = "US" | "CA" | "UK";
+
+export type PostalCodeConfig = {
+  label: string;
+  placeholder: string;
+  format: (value: string) => string;
+};

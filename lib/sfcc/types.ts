@@ -35,6 +35,7 @@ export type SalesforceProduct = {
   images: Image[];
   availableForSale: boolean;
   updatedAt: string;
+  variationValues?: Record<string, string>;
 };
 
 export type Product = Omit<SalesforceProduct, "variants" | "images"> & {
@@ -56,7 +57,10 @@ export type ProductVariant = {
 export type ProductOption = {
   id: string;
   name: string;
-  values: string[];
+  values: {
+    id: string;
+    name: string;
+  }[];
 };
 
 export type Money = {

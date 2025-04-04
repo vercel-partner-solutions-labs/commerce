@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { createContext, useContext, useMemo, useOptimistic } from 'react';
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { createContext, useContext, useMemo, useOptimistic } from "react";
 
 type ProductState = {
   [key: string]: string;
@@ -32,7 +32,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     getInitialState(),
     (prevState: ProductState, update: ProductState) => ({
       ...prevState,
-      ...update
+      ...update,
     })
   );
 
@@ -52,7 +52,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     () => ({
       state,
       updateOption,
-      updateImage
+      updateImage,
     }),
     [state]
   );
@@ -63,19 +63,30 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 export function useProduct() {
   const context = useContext(ProductContext);
   if (context === undefined) {
-    throw new Error('useProduct must be used within a ProductProvider');
+    throw new Error("useProduct must be used within a ProductProvider");
   }
   return context;
 }
 
+// Updates the url with given state. Defaults to 'replace' so that changing product
+// options does not keep adding to the history stack, forcing the user to press back
+// sevral times to get back to the PLP or other entry page.
 export function useUpdateURL() {
   const router = useRouter();
 
-  return (state: ProductState) => {
+  return (state: ProductState, useReplace = true) => {
     const newParams = new URLSearchParams(window.location.search);
     Object.entries(state).forEach(([key, value]) => {
       newParams.set(key, value);
     });
-    router.push(`?${newParams.toString()}`, { scroll: false });
+
+    const url = `?${newParams.toString()}`;
+    const options = { scroll: false };
+
+    if (useReplace) {
+      router.replace(url, options);
+    } else {
+      router.push(url, options);
+    }
   };
 }
