@@ -17,7 +17,11 @@ export default function Search() {
   console.log(searchQuery);
 
   return (
-    <Form action="/search" className="w-max-[550px] relative w-full lg:w-80 xl:w-full">
+    <Form
+      action="/search"
+      prefetch={false}
+      className="w-max-[550px] relative w-full lg:w-80 xl:w-full"
+    >
       <input
         type="text"
         name="q"
