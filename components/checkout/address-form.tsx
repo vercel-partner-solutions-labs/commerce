@@ -1,3 +1,4 @@
+import { PhoneInput } from "@/components/phone-input";
 import { PostalCodeInput } from "@/components/postal-code-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CountryCode } from "@/lib/constants";
 import { addressFormSchema } from "@/lib/schemas";
 import { useState } from "react";
 import { z } from "zod";
@@ -245,6 +247,19 @@ export function AddressForm({
             )}
           </div>
         </div>
+        <PhoneInput
+          id={getFieldName("phone")}
+          name={getFieldName("phone")}
+          country={selectedCountry as CountryCode}
+          defaultValue={defaultValues.phone}
+          disabled={pending}
+          labelText="Phone (optional)"
+          error={
+            errors?.[getFieldName("phone")]
+              ? errors[getFieldName("phone")]![0]
+              : undefined
+          }
+        />
       </CardContent>
     </Card>
   );

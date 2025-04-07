@@ -158,3 +158,27 @@ export const formatUKPostcode = (value: string): string => {
     return `${cleaned.slice(0, outwardLength)} ${cleaned.slice(outwardLength)}`.trim();
   }
 };
+
+// Format phone for US: (XXX) XXX-XXXX
+export const formatUSPhone = (value: string): string => {
+  // Remove non-numeric characters
+  const nums = value.replace(/[^\d]/g, "");
+
+  if (nums.length <= 3) {
+    return nums;
+  } else if (nums.length <= 6) {
+    return `(${nums.slice(0, 3)}) ${nums.slice(3)}`;
+  } else {
+    return `(${nums.slice(0, 3)}) ${nums.slice(3, 6)}-${nums.slice(6, 10)}`;
+  }
+};
+
+// Format phone for Canada: (XXX) XXX-XXXX (same as US)
+export const formatCAPhone = (value: string): string => {
+  return formatUSPhone(value);
+};
+
+// No formatting for UK phone numbers to keep things simple
+export const formatUKPhone = (value: string): string => {
+  return value;
+};
