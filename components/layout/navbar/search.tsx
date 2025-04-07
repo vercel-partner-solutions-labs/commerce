@@ -14,6 +14,8 @@ export default function Search() {
     setSearchQuery(query);
   }, [query]);
 
+  console.log(searchQuery);
+
   return (
     <Form action="/search" className="w-max-[550px] relative w-full lg:w-80 xl:w-full">
       <input
@@ -23,6 +25,7 @@ export default function Search() {
         autoComplete="off"
         value={searchQuery}
         onChange={(e) => {
+          console.log("setting", e.target.value);
           setSearchQuery(e.target.value);
         }}
         className="text-md w-full rounded-lg border bg-white px-4 py-2 text-black placeholder:text-neutral-500 md:text-sm dark:border-neutral-800 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-400"
