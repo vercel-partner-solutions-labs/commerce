@@ -21,12 +21,14 @@ export type SalesforceProduct = {
   id: string;
   title: string;
   handle: string;
+  categoryId?: string;
   description: string;
   descriptionHtml: string;
   featuredImage: Image;
+  currencyCode: string;
   priceRange: {
-    maxVariantPrice: Money;
-    minVariantPrice: Money;
+    max: string;
+    min: string;
   };
   seo: SEO;
   options: ProductOption[];

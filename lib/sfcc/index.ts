@@ -23,7 +23,7 @@ import {
   reshapeShippingMethods,
 } from "./reshape";
 import { ensureSDKResponseError } from "./type-guards";
-import { CartItem, Product, SortedProductResult } from "./types";
+import { CartItem, Product } from "./types";
 
 const apiConfig = {
   throwOnBadResponse: true,
@@ -370,25 +370,19 @@ async function searchProducts(options: {
     },
   });
 
-  const results: SortedProductResult[] = [];
-
   const productsClient = new ShopperProducts(config);
-  await Promise.all(
-    searchResults.hits.map(async (product, index) => {
-      const productResult = await productsClient.getProduct({
+
+  const results = await Promise.all(
+    (searchResults.hits || []).map((product) => {
+      return productsClient.getProduct({
         parameters: {
           id: product.productId,
         },
       });
-      results.push({ productResult, index });
     })
   );
 
-  const sortedResults = results
-    .sort((a, b) => a.index - b.index)
-    .map((item) => item.productResult);
-
-  return reshapeProducts(sortedResults);
+  return reshapeProducts(results);
 }
 
 async function getCartItems(createdBasket: ShopperBasketsTypes.Basket) {

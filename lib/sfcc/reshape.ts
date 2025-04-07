@@ -66,7 +66,7 @@ export function reshapeCategories(categories: ShopperProductsTypes.Category[]) {
   return reshapedCategories;
 }
 
-export function reshapeProduct(product: ShopperProductsTypes.Product) {
+export function reshapeProduct(product: ShopperProductsTypes.Product): Product {
   if (!product.name) {
     throw new Error("Product name is not set");
   }
@@ -76,12 +76,6 @@ export function reshapeProduct(product: ShopperProductsTypes.Product) {
   if (!images[0]) {
     throw new Error("Product image is not set");
   }
-
-  const flattenedPrices =
-    product.variants
-      ?.filter((variant) => variant.price !== undefined)
-      .reduce((acc: number[], variant) => [...acc, variant.price!], [])
-      .sort((a, b) => a - b) || [];
 
   return {
     id: product.id,
@@ -94,16 +88,12 @@ export function reshapeProduct(product: ShopperProductsTypes.Product) {
     featuredImage: images[0],
     // TODO: check dates for whether it is available
     availableForSale: true,
+    currencyCode: product.currency || "USD",
     priceRange: {
-      maxVariantPrice: {
-        // TODO: verify whether there is another property for this
-        amount: flattenedPrices[flattenedPrices.length - 1]?.toString() || "0",
-        currencyCode: product.currency || "USD",
-      },
-      minVariantPrice: {
-        amount: flattenedPrices[0]?.toString() || "0",
-        currencyCode: product.currency || "USD",
-      },
+      // In the unlikely case of a missing price, we set a default of $9999.99 to avoid listing items
+      // as $0. This is preferrable for most merchants to avoid having to honor free purchases.
+      max: product.priceMax?.toString() || product.price?.toString() || "9999.99",
+      min: product.price?.toString() || "9999.99",
     },
     images: images,
     options:
@@ -130,7 +120,7 @@ export function reshapeProduct(product: ShopperProductsTypes.Product) {
   };
 }
 
-export function reshapeProducts(products: ShopperProductsTypes.Product[]) {
+export function reshapeProducts(products: ShopperProductsTypes.Product[]): Product[] {
   const reshapedProducts = [];
   for (const product of products) {
     if (product) {
