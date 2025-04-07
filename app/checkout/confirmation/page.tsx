@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 export default async function CheckoutConfirmationPage() {
   const order = await getCheckoutOrder();
-  console.log("order", order);
+
   if (!order) {
     redirect("/");
   }

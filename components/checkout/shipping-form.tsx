@@ -27,7 +27,7 @@ export function ShippingForm({ shippingMethodsPromise }: ShippingFormProps) {
   const errors = state?.errors?.fieldErrors;
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} className="space-y-6 md:space-y-8">
       <Card>
         <CardHeader>
           <CardTitle>Shipping Method</CardTitle>

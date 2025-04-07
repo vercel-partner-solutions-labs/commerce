@@ -33,7 +33,13 @@ export function CheckoutStatus({
     return null;
   }
 
-  const { customerEmail, shippingAddress, shippingMethod, paymentInstruments } = data;
+  const {
+    customerEmail,
+    shippingAddress,
+    shippingMethod,
+    paymentInstruments,
+    billingAddress,
+  } = data;
   const payment = paymentInstruments?.[0];
 
   const CardIcon = {
@@ -42,6 +48,14 @@ export function CheckoutStatus({
     Amex: AmexIcon,
     Discover: DiscoverIcon,
   }[payment?.paymentCard?.cardType || ""];
+
+  const isBillingSameAsShipping =
+    billingAddress &&
+    shippingAddress &&
+    billingAddress.address1 === shippingAddress.address1 &&
+    billingAddress.city === shippingAddress.city &&
+    billingAddress.state === shippingAddress.state &&
+    billingAddress.zip === shippingAddress.zip;
 
   return (
     <Card>
@@ -103,18 +117,37 @@ export function CheckoutStatus({
           <>
             <Separator />
             <LineItem label="Payment" step={CheckoutStep.Payment} editable={editable}>
-              <div className="flex items-center gap-3">
-                {CardIcon ? (
-                  <CardIcon className="w-6 h-5" />
-                ) : (
-                  <CreditCard className="w-6 h-6opacity-50" />
-                )}
-                <span>
-                  Ending in{" "}
-                  <span className="font-bold">
-                    {payment.paymentCard?.numberLastDigits}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  {CardIcon ? (
+                    <CardIcon className="w-6 h-5" />
+                  ) : (
+                    <CreditCard className="w-6 h-6 opacity-50" />
+                  )}
+                  <span>
+                    Ending in{" "}
+                    <span className="font-bold">
+                      {payment.paymentCard?.numberLastDigits}
+                    </span>
                   </span>
-                </span>
+                </div>
+                {billingAddress && (
+                  <div>
+                    <p className="text-sm text-neutral-400">
+                      {isBillingSameAsShipping ? (
+                        "Billing address same as shipping"
+                      ) : (
+                        <>
+                          {billingAddress.address1}
+                          {billingAddress.address2
+                            ? `, ${billingAddress.address2}`
+                            : ""}, {billingAddress.city} {billingAddress.state},{" "}
+                          {billingAddress.zip}, {billingAddress.country}
+                        </>
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             </LineItem>
           </>
