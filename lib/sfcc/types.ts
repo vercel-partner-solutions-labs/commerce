@@ -27,8 +27,8 @@ export type SalesforceProduct = {
   featuredImage: Image;
   currencyCode: string;
   priceRange: {
-    max: string;
-    min: string;
+    maxVariantPrice: Money;
+    minVariantPrice: Money;
   };
   seo: SEO;
   options: ProductOption[];

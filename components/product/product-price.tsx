@@ -20,8 +20,8 @@ export function ProductPrice({ product }: { product: Product }) {
 
   return (
     <Price
-      minAmount={priceRange.min}
-      maxAmount={priceRange.max}
+      minAmount={priceRange.minVariantPrice.amount}
+      maxAmount={priceRange.maxVariantPrice.amount}
       currencyCode={currencyCode}
     />
   );

@@ -92,8 +92,14 @@ export function reshapeProduct(product: ShopperProductsTypes.Product): Product {
     priceRange: {
       // In the unlikely case of a missing price, we set a default of $9999.99 to avoid listing items
       // as $0. This is preferrable for most merchants to avoid having to honor free purchases.
-      max: product.priceMax?.toString() || product.price?.toString() || "9999.99",
-      min: product.price?.toString() || "9999.99",
+      maxVariantPrice: {
+        amount: product.priceMax?.toString() || product.price?.toString() || "9999.99",
+        currencyCode: product.currency || "USD",
+      },
+      minVariantPrice: {
+        amount: product.price?.toString() || "9999.99",
+        currencyCode: product.currency || "USD",
+      },
     },
     images: images,
     options:
