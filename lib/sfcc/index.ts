@@ -10,7 +10,7 @@ import {
   ShopperSearch,
 } from "commerce-sdk-isomorphic";
 import { defaultSort, storeCatalog, TAGS } from "lib/constants";
-import { unstable_cache as cache, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -35,54 +35,39 @@ const apiConfig = {
   },
 };
 
-export const getCollections = cache(
-  async () => {
-    return await getSFCCCollections();
-  },
-  ["get-collections"],
-  {
-    tags: [TAGS.collections],
-  }
-);
+export const getCollections = async () => {
+  return await getSFCCCollections();
+};
 
 export async function getCollection(handle: string) {
   const collections = await getCollections();
   return collections.find((c) => c.handle === handle);
 }
 
-export const getProduct = cache(
-  async (id: string) => getSFCCProduct(id),
-  ["get-product"],
-  {
-    tags: [TAGS.products],
-  }
-);
+export const getProduct = async (id: string) => getSFCCProduct(id);
 
-export const getCollectionProducts = cache(
-  async ({
-    collection,
-    limit,
-    sortKey,
-  }: {
-    collection: string;
-    limit?: number;
-    sortKey?: string;
-  }) => {
-    return await searchProducts({ categoryId: collection, limit, sortKey });
-  },
-  ["get-collection-products"],
-  { tags: [TAGS.products, TAGS.collections] }
-);
+export const getCollectionProducts = async ({
+  collection,
+  limit,
+  sortKey,
+}: {
+  collection: string;
+  limit?: number;
+  sortKey?: string;
+}) => {
+  return await searchProducts({ categoryId: collection, limit, sortKey });
+};
 
-export const getProducts = cache(
-  async ({ query, sortKey }: { query?: string; sortKey?: string; reverse?: boolean }) => {
-    return await searchProducts({ query, sortKey });
-  },
-  ["get-products"],
-  {
-    tags: [TAGS.products],
-  }
-);
+export const getProducts = async ({
+  query,
+  sortKey,
+}: {
+  query?: string;
+  sortKey?: string;
+  reverse?: boolean;
+}) => {
+  return await searchProducts({ query, sortKey });
+};
 
 export async function createCart() {
   let guestToken = (await cookies()).get("guest_token")?.value;
@@ -144,7 +129,9 @@ export async function getCart() {
   }
 }
 
-export async function addToCart(lines: { merchandiseId: string; quantity: number }[]) {
+export async function addToCart(
+  lines: { merchandiseId: string; quantity: number }[]
+) {
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -178,7 +165,8 @@ export async function addToCart(lines: { merchandiseId: string; quantity: number
 export async function removeFromCart(lineIds: string[]) {
   const cartId = (await cookies()).get("cartId")?.value!;
   // Next Commerce only sends one lineId at a time
-  if (lineIds.length !== 1) throw new Error("Invalid number of line items provided");
+  if (lineIds.length !== 1)
+    throw new Error("Invalid number of line items provided");
 
   // get the guest token to get the correct guest cart
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -262,7 +250,10 @@ export async function getProductRecommendations(productId: string) {
 
   if (!categoryId) return [];
 
-  const products = await getCollectionProducts({ collection: categoryId, limit: 11 });
+  const products = await getCollectionProducts({
+    collection: categoryId,
+    limit: 11,
+  });
 
   // Filter out the product we're already looking at.
   return products.filter((product) => product.id !== productId);
@@ -274,7 +265,11 @@ export async function revalidate(req: NextRequest) {
     "collections/delete",
     "collections/update",
   ];
-  const productWebhooks = ["products/create", "products/delete", "products/update"];
+  const productWebhooks = [
+    "products/create",
+    "products/delete",
+    "products/update",
+  ];
   const topic = (await headers()).get("x-sfcc-topic") || "unknown";
   const secret = req.nextUrl.searchParams.get("secret");
   const isCollectionUpdate = collectionWebhooks.includes(topic);
@@ -310,7 +305,10 @@ async function getGuestUserAuthToken() {
       { clientSecret: process.env.SFCC_SECRET || "" }
     );
   } catch (e) {
-    const error = await ensureSDKResponseError(e, "Failed to retrieve access token");
+    const error = await ensureSDKResponseError(
+      e,
+      "Failed to retrieve access token"
+    );
     throw new Error(error);
   }
 }
@@ -357,7 +355,12 @@ async function searchProducts(options: {
   sortKey?: string;
   limit?: number;
 }) {
-  const { query, categoryId, sortKey = defaultSort.sortKey, limit = 100 } = options;
+  const {
+    query,
+    categoryId,
+    sortKey = defaultSort.sortKey,
+    limit = 100,
+  } = options;
   const config = await getGuestUserConfig();
 
   const searchClient = new ShopperSearch(config);
@@ -439,7 +442,10 @@ export async function updateCustomerInfo(email: string) {
       },
     });
   } catch (e) {
-    const error = await ensureSDKResponseError(e, "Error updating basket email");
+    const error = await ensureSDKResponseError(
+      e,
+      "Error updating basket email"
+    );
     throw new Error(error);
   }
 }
@@ -515,7 +521,10 @@ export async function updateShippingMethod(shippingMethodId: string) {
       },
     });
   } catch (e) {
-    const error = await ensureSDKResponseError(e, "Error updating shipping method");
+    const error = await ensureSDKResponseError(
+      e,
+      "Error updating shipping method"
+    );
     throw new Error(error);
   }
 }
@@ -581,7 +590,10 @@ export async function getShippingMethods() {
 
     return reshapeShippingMethods(shippingMethods);
   } catch (e) {
-    const error = await ensureSDKResponseError(e, "Error fetching shipping methods");
+    const error = await ensureSDKResponseError(
+      e,
+      "Error fetching shipping methods"
+    );
     throw new Error(error);
   }
 }
