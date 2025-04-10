@@ -152,18 +152,10 @@ export default function CartModal() {
                                     <span className="leading-tight">
                                       {item.merchandise.product.title}
                                     </span>
-                                    {item.merchandise.selectedOptions.some(
-                                      ({ value }) => value !== DEFAULT_OPTION
-                                    ) ? (
-                                      <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                                        {item.merchandise.selectedOptions
-                                          .filter(({ value }) => value !== DEFAULT_OPTION)
-                                          .map(({ name, value }) => (
-                                            <div key={`${item.id}-${name}`}>
-                                              {name}: {value}
-                                            </div>
-                                          ))}
-                                      </div>
+                                    {item.merchandise.title !== DEFAULT_OPTION ? (
+                                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        {item.merchandise.title}
+                                      </p>
                                     ) : null}
                                   </div>
                                 </Link>
