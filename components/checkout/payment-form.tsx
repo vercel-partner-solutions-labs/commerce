@@ -19,8 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { billingAddressSchema, paymentFormSchema } from "@/lib/schemas";
-import { months, years } from "@/lib/sfcc/form-helpers";
+import { billingAddressSchema, paymentFormSchema } from "@/lib/sfcc/schemas";
+import { months, years } from "@/lib/sfcc/utils";
 import clsx from "clsx";
 import { useState } from "react";
 import { useCart } from "../cart/cart-context";
