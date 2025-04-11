@@ -1,10 +1,12 @@
-import { getCollectionProducts } from 'lib/sfcc';
-import Link from 'next/link';
-import { GridTileImage } from './grid/tile';
+import { getCollectionProducts } from "lib/sfcc";
+import Link from "next/link";
+import { GridTileImage } from "./grid/tile";
 
 export async function Carousel() {
   // Collections that start with `hidden-*` are hidden from the search page.
-  const products = await getCollectionProducts({ collection: 'hidden-homepage-carousel' });
+  const products = await getCollectionProducts({
+    collection: "hidden-homepage-carousel",
+  });
 
   if (!products?.length) return null;
 
@@ -24,8 +26,9 @@ export async function Carousel() {
                 alt={product.title}
                 label={{
                   title: product.title,
-                  amount: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.priceRange.maxVariantPrice.currencyCode
+                  amountMin: product.priceRange.minVariantPrice.amount,
+                  amountMax: product.priceRange.maxVariantPrice.amount,
+                  currencyCode: product.currencyCode,
                 }}
                 src={product.featuredImage?.url}
                 fill

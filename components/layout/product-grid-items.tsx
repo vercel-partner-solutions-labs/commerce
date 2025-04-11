@@ -1,7 +1,7 @@
-import Grid from 'components/grid';
-import { GridTileImage } from 'components/grid/tile';
-import { Product } from 'lib/sfcc/types';
-import Link from 'next/link';
+import Grid from "components/grid";
+import { GridTileImage } from "components/grid/tile";
+import { Product } from "lib/sfcc/types";
+import Link from "next/link";
 
 export default function ProductGridItems({ products }: { products: Product[] }) {
   return (
@@ -17,8 +17,9 @@ export default function ProductGridItems({ products }: { products: Product[] }) 
               alt={product.title}
               label={{
                 title: product.title,
-                amount: product.priceRange.maxVariantPrice.amount,
-                currencyCode: product.priceRange.maxVariantPrice.currencyCode
+                amountMin: product.priceRange.minVariantPrice.amount,
+                amountMax: product.priceRange.maxVariantPrice.amount,
+                currencyCode: product.currencyCode,
               }}
               src={product.featuredImage?.url}
               fill

@@ -39,6 +39,7 @@ export async function updateShippingContact(
       stateCode: data.state,
       postalCode: data.zip,
       countryCode: data.country,
+      phone: data.phone ? data.phone.replace(/\D/g, "") : undefined,
     });
 
     revalidateTag(TAGS.cart);
@@ -129,6 +130,9 @@ export async function updateBillingAddress(
       stateCode: data["billingAddress.state"],
       postalCode: data["billingAddress.zip"],
       countryCode: data["billingAddress.country"],
+      phone: data["billingAddress.phone"]
+        ? data["billingAddress.phone"].replace(/\D/g, "")
+        : undefined,
     });
 
     revalidateTag(TAGS.cart);

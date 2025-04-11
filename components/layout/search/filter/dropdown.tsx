@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import type { ListItem } from '.';
-import { FilterItem } from './item';
+import { defaultSort } from "@/lib/constants";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import type { ListItem } from ".";
+import { FilterItem } from "./item";
 
 export default function FilterItemDropdown({ list }: { list: ListItem[] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [active, setActive] = useState('');
+  const [active, setActive] = useState("");
   const [openSelect, setOpenSelect] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const sort = searchParams.get("sort");
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -21,20 +24,22 @@ export default function FilterItemDropdown({ list }: { list: ListItem[] }) {
       }
     };
 
-    window.addEventListener('click', handleClickOutside);
-    return () => window.removeEventListener('click', handleClickOutside);
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
   useEffect(() => {
     list.forEach((listItem: ListItem) => {
       if (
-        ('path' in listItem && pathname === listItem.path) ||
-        ('slug' in listItem && searchParams.get('sort') === listItem.slug)
+        ("path" in listItem && pathname === listItem.path) ||
+        ("slug" in listItem &&
+          ((sort && sort === listItem.slug) ||
+            (!sort && defaultSort.slug === listItem.slug)))
       ) {
         setActive(listItem.title);
       }
     });
-  }, [pathname, list, searchParams]);
+  }, [pathname, list, sort]);
 
   return (
     <div className="relative" ref={ref}>

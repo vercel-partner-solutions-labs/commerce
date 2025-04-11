@@ -11,6 +11,12 @@ export const addressFormSchema = z.object({
   state: z.string().min(1, "State is required"),
   zip: z.string().min(1, "Zip code is required"),
   country: z.string().min(1, "Country is required"),
+  phone: z
+    .string()
+    .optional()
+    .refine((val) => !val || val.replace(/\D/g, "").length >= 10, {
+      message: "Please enter a valid phone number",
+    }),
 });
 
 // Information form schema extends the address schema with email
