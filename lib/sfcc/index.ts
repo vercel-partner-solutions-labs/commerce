@@ -1,4 +1,3 @@
-import { getCardType, maskCardNumber } from "@/lib/utils/form-helpers";
 import {
   helpers,
   ShopperBaskets,
@@ -24,6 +23,7 @@ import {
 } from "./reshape";
 import { ensureSDKResponseError } from "./type-guards";
 import { CartItem, Product } from "./types";
+import { getCardType, maskCardNumber } from "./utils";
 
 const apiConfig = {
   throwOnBadResponse: true,

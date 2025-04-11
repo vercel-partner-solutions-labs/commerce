@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CheckoutStep, checkoutStepRoutes } from "@/lib/constants";
+import { CheckoutStep, checkoutStepRoutes } from "@/lib/sfcc/constants";
 import { Order } from "@/lib/sfcc/types";
 import { CreditCard } from "lucide-react";
 import Link from "next/link";
