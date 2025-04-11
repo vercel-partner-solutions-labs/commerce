@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CountryCode, PostalCodeConfig } from "@/lib/constants";
-import { formatCAPostal, formatUKPostcode, formatUSZip } from "@/lib/utils/form-helpers";
+import { formatCAPostal, formatUKPostcode, formatUSZip } from "@/lib/sfcc/form-helpers";
 import { useEffect, useState } from "react";
 
 export interface PostalCodeInputProps

@@ -5,7 +5,7 @@ import {
   formatCreditCardNumber,
   getCardType,
   stripCardFormatting,
-} from "@/lib/utils/form-helpers";
+} from "@/lib/sfcc/form-helpers";
 import { CreditCard } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { AmexIcon, DiscoverIcon, MasterCardIcon, VisaIcon } from "./icons/cc-icons";

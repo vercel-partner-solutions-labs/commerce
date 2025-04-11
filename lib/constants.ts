@@ -1,9 +1,3 @@
-import { z } from "zod";
-
-export const storeCatalog = {
-  ids: "mens,womens,newarrivals,top-seller",
-};
-
 export type SortFilterItem = {
   title: string;
   slug: string | null;
@@ -14,6 +8,10 @@ export type SortFilterItem = {
     | "product-name-ascending"
     | "product-name-descending";
   reverse: boolean;
+};
+
+export const storeCatalog = {
+  ids: "mens,womens,newarrivals,top-seller",
 };
 
 export const defaultSort: SortFilterItem = {
@@ -59,36 +57,3 @@ export const TAGS = {
 
 export const HIDDEN_PRODUCT_TAG = "nextjs-frontend-hidden";
 export const DEFAULT_OPTION = "Default Title";
-
-// Type for the state returned from our form actions. Provides
-// additional type safety for error fields.
-export type FormActionState<T extends z.ZodTypeAny = z.ZodTypeAny> =
-  | {
-      errors: {
-        formErrors?: string[];
-        fieldErrors?: z.inferFlattenedErrors<T>["fieldErrors"];
-      };
-    }
-  | undefined;
-
-export enum CheckoutStep {
-  Information = 1,
-  Shipping,
-  Payment,
-  Confirmation,
-}
-
-export const checkoutStepRoutes: Record<CheckoutStep, string> = {
-  [CheckoutStep.Information]: "/checkout/information",
-  [CheckoutStep.Shipping]: "/checkout/shipping",
-  [CheckoutStep.Payment]: "/checkout/payment",
-  [CheckoutStep.Confirmation]: "/checkout/confirmation",
-};
-
-export type CountryCode = "US" | "CA" | "UK";
-
-export type PostalCodeConfig = {
-  label: string;
-  placeholder: string;
-  format: (value: string) => string;
-};
