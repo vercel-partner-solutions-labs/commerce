@@ -1,14 +1,15 @@
 "use server";
 
-import { FormActionState, TAGS } from "@/lib/constants";
+import { TAGS } from "@/lib/constants";
+import * as api from "@/lib/sfcc";
+import { FormActionState } from "@/lib/sfcc/constants";
 import {
   billingAddressSchema,
   informationFormSchema,
   paymentFormSchema,
   shippingMethodFormSchema,
-} from "@/lib/schemas";
-import * as api from "@/lib/sfcc";
-import { handleFormActionError } from "@/lib/utils";
+} from "@/lib/sfcc/schemas";
+import { handleFormActionError } from "@/lib/sfcc/utils";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 

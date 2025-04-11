@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckoutStep, checkoutStepRoutes } from "@/lib/constants";
+import { CheckoutStep, checkoutStepRoutes } from "@/lib/sfcc/constants";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";

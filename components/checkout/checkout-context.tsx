@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckoutStep, checkoutStepRoutes, FormActionState } from "@/lib/constants";
+import { CheckoutStep, checkoutStepRoutes, FormActionState } from "@/lib/sfcc/constants";
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
