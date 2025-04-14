@@ -1,4 +1,3 @@
-import { getCardType, maskCardNumber } from "@/lib/utils/form-helpers";
 import {
   helpers,
   ShopperBaskets,
@@ -9,8 +8,13 @@ import {
   ShopperProducts,
   ShopperSearch,
 } from "commerce-sdk-isomorphic";
-import { defaultSort, storeCatalog, TAGS } from "lib/constants";
-import { unstable_cache as cache, revalidateTag } from "next/cache";
+import { TAGS } from "lib/constants";
+import { defaultSort, storeCatalog } from "lib/sfcc/constants";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+  revalidateTag,
+} from "next/cache";
 import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -24,6 +28,7 @@ import {
 } from "./reshape";
 import { ensureSDKResponseError } from "./type-guards";
 import { CartItem, Product } from "./types";
+import { getCardType, maskCardNumber } from "./utils";
 
 const apiConfig = {
   throwOnBadResponse: true,
@@ -35,54 +40,53 @@ const apiConfig = {
   },
 };
 
-export const getCollections = cache(
-  async () => {
-    return await getSFCCCollections();
-  },
-  ["get-collections"],
-  {
-    tags: [TAGS.collections],
-  }
-);
+export async function getCollections() {
+  "use cache";
+  cacheTag(TAGS.collections);
+  cacheLife("days");
+  return await getSFCCCollections();
+}
 
 export async function getCollection(handle: string) {
   const collections = await getCollections();
   return collections.find((c) => c.handle === handle);
 }
 
-export const getProduct = cache(
-  async (id: string) => getSFCCProduct(id),
-  ["get-product"],
-  {
-    tags: [TAGS.products],
-  }
-);
+export async function getProduct(id: string) {
+  "use cache";
+  cacheTag(TAGS.products);
+  cacheLife("days");
+  return getSFCCProduct(id);
+}
 
-export const getCollectionProducts = cache(
-  async ({
-    collection,
-    limit,
-    sortKey,
-  }: {
-    collection: string;
-    limit?: number;
-    sortKey?: string;
-  }) => {
-    return await searchProducts({ categoryId: collection, limit, sortKey });
-  },
-  ["get-collection-products"],
-  { tags: [TAGS.products, TAGS.collections] }
-);
+export async function getCollectionProducts({
+  collection,
+  limit = 100,
+  sortKey,
+}: {
+  collection: string;
+  limit?: number;
+  sortKey?: string;
+}) {
+  "use cache";
+  cacheTag(TAGS.products, TAGS.collections);
+  cacheLife("days");
+  return await searchProducts({ categoryId: collection, limit, sortKey });
+}
 
-export const getProducts = cache(
-  async ({ query, sortKey }: { query?: string; sortKey?: string; reverse?: boolean }) => {
-    return await searchProducts({ query, sortKey });
-  },
-  ["get-products"],
-  {
-    tags: [TAGS.products],
-  }
-);
+export async function getProducts({
+  query,
+  sortKey,
+}: {
+  query?: string;
+  sortKey?: string;
+  reverse?: boolean;
+}) {
+  "use cache";
+  cacheTag(TAGS.products);
+  cacheLife("days");
+  return await searchProducts({ query, sortKey });
+}
 
 export async function createCart() {
   let guestToken = (await cookies()).get("guest_token")?.value;
@@ -258,6 +262,11 @@ export async function getProductRecommendations(productId: string) {
   // done through Einstein, which isn't available in this environment.
   // For now, we refetch the product and use the categoryId to get recommendations.
   // This fills the need for now and doesn't require changes to the UI.
+
+  "use cache";
+  cacheTag(TAGS.products);
+  cacheLife("days");
+
   const categoryId = (await getProduct(productId)).categoryId;
 
   if (!categoryId) return [];

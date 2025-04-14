@@ -3,8 +3,8 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { defaultSort } from "@/lib/constants";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { defaultSort } from "lib/sfcc/constants";
 import type { ListItem } from ".";
 import { FilterItem } from "./item";
 
