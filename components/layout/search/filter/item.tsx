@@ -1,8 +1,8 @@
 "use client";
 
 import clsx from "clsx";
-import type { SortFilterItem } from "lib/constants";
-import { defaultSort } from "lib/constants";
+import type { SortFilterItem } from "lib/sfcc/constants";
+import { defaultSort } from "lib/sfcc/constants";
 import { createUrl } from "lib/utils";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";

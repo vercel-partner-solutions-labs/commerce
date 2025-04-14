@@ -8,7 +8,8 @@ import {
   ShopperProducts,
   ShopperSearch,
 } from "commerce-sdk-isomorphic";
-import { defaultSort, storeCatalog, TAGS } from "lib/constants";
+import { TAGS } from "lib/constants";
+import { defaultSort, storeCatalog } from "lib/sfcc/constants";
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
