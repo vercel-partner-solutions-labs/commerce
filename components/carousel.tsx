@@ -28,7 +28,7 @@ export async function Carousel() {
                   title: product.title,
                   amountMin: product.priceRange.minVariantPrice.amount,
                   amountMax: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.currencyCode,
+                  currencyCode: product.priceRange.minVariantPrice.currencyCode,
                 }}
                 src={product.featuredImage?.url}
                 fill
