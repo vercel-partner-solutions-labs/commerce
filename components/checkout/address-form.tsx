@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CountryCode } from "@/lib/constants";
-import { addressFormSchema } from "@/lib/schemas";
+import { CountryCode } from "@/lib/sfcc/constants";
+import { addressFormSchema } from "@/lib/sfcc/schemas";
 import { useState } from "react";
 import { z } from "zod";
 

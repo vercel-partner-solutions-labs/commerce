@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CountryCode } from "@/lib/constants";
-import { formatCAPhone, formatUKPhone, formatUSPhone } from "@/lib/utils/form-helpers";
+import { CountryCode } from "@/lib/sfcc/constants";
+import { formatCAPhone, formatUKPhone, formatUSPhone } from "@/lib/sfcc/utils";
 import { useEffect, useState } from "react";
 
 export interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
