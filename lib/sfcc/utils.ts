@@ -195,7 +195,10 @@ export const formatUKPhone = (value: string): string => {
 };
 
 // Helper for returning the expected error state to actions instead of throwing.
-export const handleFormActionError = (error: unknown, defaultMessage: string) => {
+export const handleFormActionError = (
+  error: unknown,
+  defaultMessage: string
+) => {
   return {
     errors: {
       formErrors: [(error as Error)?.message || defaultMessage],
@@ -204,7 +207,9 @@ export const handleFormActionError = (error: unknown, defaultMessage: string) =>
 };
 
 type PrefixedShape<T extends z.ZodObject<any>, P extends string> = {
-  [K in keyof T["shape"] as K extends string ? `${P}.${K}` : never]: T["shape"][K];
+  [K in keyof T["shape"] as K extends string
+    ? `${P}.${K}`
+    : never]: T["shape"][K];
 };
 
 // Creates a new Zod schema with all keys prefixed with the given string.
@@ -222,4 +227,31 @@ export const prefixSchema = <T extends z.ZodObject<any>, P extends string>(
   }
 
   return z.object(newShape);
+};
+
+export const validateEnvironmentVariables = () => {
+  const requiredEnvironmentVariables = [
+    "SITE_NAME",
+    "SFCC_CLIENT_ID",
+    "SFCC_ORGANIZATIONID",
+    "SFCC_SECRET",
+    "SFCC_SHORTCODE",
+    "SFCC_SITEID",
+    "SFCC_REVALIDATION_SECRET",
+  ];
+  const missingEnvironmentVariables = [] as string[];
+
+  requiredEnvironmentVariables.forEach((envVar) => {
+    if (!process.env[envVar]) {
+      missingEnvironmentVariables.push(envVar);
+    }
+  });
+
+  if (missingEnvironmentVariables.length) {
+    throw new Error(
+      `The following environment variables are missing. Your site will not work without them. Read more: https://vercel.com/docs/integrations/shopify#configure-environment-variables\n\n${missingEnvironmentVariables.join(
+        "\n"
+      )}\n`
+    );
+  }
 };
