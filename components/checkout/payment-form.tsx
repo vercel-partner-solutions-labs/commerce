@@ -80,7 +80,11 @@ export function PaymentForm() {
               disabled={pending}
             />
             {errors?.cardholderName && (
-              <p id="cardholderName-error" className="text-sm text-red-500" role="alert">
+              <p
+                id="cardholderName-error"
+                className="text-sm text-red-500"
+                role="alert"
+              >
                 {errors.cardholderName}
               </p>
             )}
@@ -120,7 +124,9 @@ export function PaymentForm() {
                 </SelectContent>
               </Select>
               {errors?.expirationMonth && (
-                <p className="text-sm text-red-500">{errors.expirationMonth[0]}</p>
+                <p className="text-sm text-red-500">
+                  {errors.expirationMonth[0]}
+                </p>
               )}
             </div>
 
@@ -142,7 +148,9 @@ export function PaymentForm() {
                 </SelectContent>
               </Select>
               {errors?.expirationYear && (
-                <p className="text-sm text-red-500">{errors.expirationYear[0]}</p>
+                <p className="text-sm text-red-500">
+                  {errors.expirationYear[0]}
+                </p>
               )}
             </div>
 
@@ -161,7 +169,11 @@ export function PaymentForm() {
                 disabled={pending}
               />
               {errors?.securityCode && (
-                <p id="securityCode-error" className="text-sm text-red-500" role="alert">
+                <p
+                  id="securityCode-error"
+                  className="text-sm text-red-500"
+                  role="alert"
+                >
                   {errors.securityCode[0]}
                 </p>
               )}
@@ -182,7 +194,9 @@ export function PaymentForm() {
               </Label>
             </div>
             {errors?.billingSameAsShipping && (
-              <p className="text-sm text-red-500">{errors.billingSameAsShipping[0]}</p>
+              <p className="text-sm text-red-500">
+                {errors.billingSameAsShipping[0]}
+              </p>
             )}
           </div>
         </CardContent>

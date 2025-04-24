@@ -17,10 +17,10 @@ import { cookies } from "next/headers";
 // Combines two baskets updates in a single action.
 export async function updateShippingContact(
   prevState: FormActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormActionState<typeof informationFormSchema>> {
   const { success, error, data } = informationFormSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!success) {
@@ -47,7 +47,7 @@ export async function updateShippingContact(
   } catch (error) {
     return handleFormActionError(
       error,
-      "An error occurred while updating your shipping address"
+      "An error occurred while updating your shipping address",
     );
   }
 }
@@ -55,10 +55,10 @@ export async function updateShippingContact(
 // Action to add/update the shipping method for the shipment
 export async function updateShippingMethod(
   prevState: FormActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormActionState<typeof shippingMethodFormSchema>> {
   const { success, error, data } = shippingMethodFormSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!success) {
@@ -72,7 +72,7 @@ export async function updateShippingMethod(
   } catch (error) {
     return handleFormActionError(
       error,
-      "An error occurred while updating your shipping method"
+      "An error occurred while updating your shipping method",
     );
   }
 }
@@ -81,7 +81,7 @@ export async function updateShippingMethod(
 // TODO: Need to handle edit scenario differently
 export async function addPaymentMethod(
   prevState: FormActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormActionState<typeof paymentFormSchema>> {
   const paymentData = Object.fromEntries(formData.entries());
   const { success, error, data } = paymentFormSchema.safeParse(paymentData);
@@ -103,7 +103,7 @@ export async function addPaymentMethod(
   } catch (error) {
     return handleFormActionError(
       error,
-      "An error occurred while adding your payment method"
+      "An error occurred while adding your payment method",
     );
   }
 }
@@ -111,10 +111,10 @@ export async function addPaymentMethod(
 // Action to update billing address
 export async function updateBillingAddress(
   prevState: FormActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormActionState<typeof billingAddressSchema>> {
   const { success, error, data } = billingAddressSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!success) {
@@ -145,7 +145,7 @@ export async function updateBillingAddress(
 // Action to place the order
 export async function placeOrder(
   prevState: FormActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormActionState> {
   try {
     const order = await api.placeOrder();
@@ -157,6 +157,9 @@ export async function placeOrder(
 
     revalidateTag(TAGS.cart);
   } catch (error) {
-    return handleFormActionError(error, "An error occurred while placing your order");
+    return handleFormActionError(
+      error,
+      "An error occurred while placing your order",
+    );
   }
 }

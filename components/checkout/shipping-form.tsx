@@ -22,7 +22,8 @@ type ShippingFormProps = {
 export function ShippingForm({ shippingMethodsPromise }: ShippingFormProps) {
   const { cart } = useCart();
   const shippingMethods = use(shippingMethodsPromise);
-  const [state, formAction, pending] = useCheckoutActionState(updateShippingMethod);
+  const [state, formAction, pending] =
+    useCheckoutActionState(updateShippingMethod);
 
   const errors = state?.errors?.fieldErrors;
 
@@ -83,7 +84,11 @@ export function ShippingForm({ shippingMethodsPromise }: ShippingFormProps) {
             ))}
 
             {errors?.shippingMethodId && (
-              <p id="shipping-method-error" className="text-sm text-red-500" role="alert">
+              <p
+                id="shipping-method-error"
+                className="text-sm text-red-500"
+                role="alert"
+              >
                 {errors.shippingMethodId[0]}
               </p>
             )}

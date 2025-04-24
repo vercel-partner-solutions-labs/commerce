@@ -7,7 +7,9 @@ import { LoadingCart } from "@/components/checkout/loading-cart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 
-export default async function CheckoutLayout({ children }: React.PropsWithChildren) {
+export default async function CheckoutLayout({
+  children,
+}: React.PropsWithChildren) {
   return (
     <CheckoutProvider>
       <div className="container mx-auto p-4 md:p-8">

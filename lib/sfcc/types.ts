@@ -1,4 +1,7 @@
-import { ShopperBasketsTypes, ShopperProductsTypes } from "commerce-sdk-isomorphic";
+import {
+  ShopperBasketsTypes,
+  ShopperProductsTypes,
+} from "commerce-sdk-isomorphic";
 
 export type Connection<T> = {
   edges: Array<Edge<T>>;

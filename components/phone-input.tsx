@@ -4,7 +4,8 @@ import { CountryCode } from "@/lib/sfcc/constants";
 import { formatCAPhone, formatUKPhone, formatUSPhone } from "@/lib/sfcc/utils";
 import { useEffect, useState } from "react";
 
-export interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface PhoneInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   country: CountryCode;
   onValueChange?: (value: string) => void;
   label?: boolean;
@@ -56,7 +57,7 @@ export function PhoneInput({
       ? value
       : typeof defaultValue === "string"
         ? defaultValue
-        : ""
+        : "",
   );
 
   // Get the configuration for the selected country

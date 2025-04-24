@@ -15,7 +15,9 @@ import { AddressForm } from "./address-form";
 
 export function InformationForm() {
   const { cart } = useCart();
-  const [state, formAction, pending] = useCheckoutActionState(updateShippingContact);
+  const [state, formAction, pending] = useCheckoutActionState(
+    updateShippingContact,
+  );
 
   const errors = state?.errors?.fieldErrors;
 
@@ -66,7 +68,11 @@ export function InformationForm() {
         aria-busy={pending}
         aria-label={pending ? "Processing..." : "Continue to Shipping Method"}
       >
-        {pending ? <LoadingDots className="bg-white" /> : "Continue to Shipping Method"}
+        {pending ? (
+          <LoadingDots className="bg-white" />
+        ) : (
+          "Continue to Shipping Method"
+        )}
       </button>
     </form>
   );

@@ -8,7 +8,12 @@ import {
 } from "@/lib/sfcc/utils";
 import { CreditCard } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { AmexIcon, DiscoverIcon, MasterCardIcon, VisaIcon } from "./icons/cc-icons";
+import {
+  AmexIcon,
+  DiscoverIcon,
+  MasterCardIcon,
+  VisaIcon,
+} from "./icons/cc-icons";
 
 interface CreditCardInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
