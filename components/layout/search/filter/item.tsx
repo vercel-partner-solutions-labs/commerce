@@ -25,7 +25,7 @@ function PathFilterItem({ item }: { item: PathFilterItem }) {
           "w-full text-sm underline-offset-4 hover:underline dark:hover:text-neutral-100",
           {
             "underline underline-offset-4": active,
-          },
+          }
         )}
       >
         {item.title}
@@ -45,7 +45,7 @@ function SortFilterItem({ item }: { item: SortFilterItem }) {
     new URLSearchParams({
       ...(q && { q }),
       ...(item.slug && item.slug.length && { sort: item.slug }),
-    }),
+    })
   );
   const DynamicTag = active ? "p" : Link;
 
@@ -55,7 +55,7 @@ function SortFilterItem({ item }: { item: SortFilterItem }) {
       key={item.title}
     >
       <DynamicTag
-        prefetch={!active ? false : undefined}
+        prefetch={true}
         href={href}
         className={clsx("w-full hover:underline hover:underline-offset-4", {
           "underline underline-offset-4": active,

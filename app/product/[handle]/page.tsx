@@ -75,7 +75,7 @@ export default async function ProductPage(props: {
   };
 
   return (
-    <ProductProvider>
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -90,25 +90,29 @@ export default async function ProductPage(props: {
                 <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden" />
               }
             >
-              <Gallery
-                images={product.images.slice(0, 5).map((image: Image) => ({
-                  src: image.url,
-                  altText: image.altText,
-                }))}
-              />
+              <ProductProvider>
+                <Gallery
+                  images={product.images.slice(0, 5).map((image: Image) => ({
+                    src: image.url,
+                    altText: image.altText,
+                  }))}
+                />
+              </ProductProvider>
             </Suspense>
           </div>
 
           <div className="basis-full lg:basis-2/6">
             <Suspense fallback={null}>
-              <ProductDescription product={product} />
+              <ProductProvider>
+                <ProductDescription product={product} />
+              </ProductProvider>
             </Suspense>
           </div>
         </div>
         <RelatedProducts id={product.id} />
       </div>
       <Footer />
-    </ProductProvider>
+    </div>
   );
 }
 
