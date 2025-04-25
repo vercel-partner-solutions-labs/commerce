@@ -15,7 +15,9 @@ function ThreeItemGridItem({
   return (
     <div
       className={
-        size === "full" ? "md:col-span-4 md:row-span-2" : "md:col-span-2 md:row-span-1"
+        size === "full"
+          ? "md:col-span-4 md:row-span-2"
+          : "md:col-span-2 md:row-span-1"
       }
     >
       <Link

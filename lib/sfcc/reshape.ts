@@ -14,7 +14,7 @@ import {
 } from "./types";
 
 export function reshapeShippingMethods(
-  shippingMethods: ShopperBasketsTypes.ShippingMethodResult
+  shippingMethods: ShopperBasketsTypes.ShippingMethodResult,
 ): ShippingMethod[] {
   return (
     shippingMethods.applicableShippingMethods?.map((method) => ({
@@ -34,7 +34,7 @@ export function reshapeShippingMethods(
 }
 
 export function reshapeCategory(
-  category: ShopperProductsTypes.Category
+  category: ShopperProductsTypes.Category,
 ): Collection | undefined {
   if (!category) {
     return undefined;
@@ -93,7 +93,10 @@ export function reshapeProduct(product: ShopperProductsTypes.Product): Product {
       // In the unlikely case of a missing price, we set a default of $9999.99 to avoid listing items
       // as $0. This is preferrable for most merchants to avoid having to honor free purchases.
       maxVariantPrice: {
-        amount: product.priceMax?.toString() || product.price?.toString() || "9999.99",
+        amount:
+          product.priceMax?.toString() ||
+          product.price?.toString() ||
+          "9999.99",
         currencyCode: product.currency || "USD",
       },
       minVariantPrice: {
@@ -126,7 +129,9 @@ export function reshapeProduct(product: ShopperProductsTypes.Product): Product {
   };
 }
 
-export function reshapeProducts(products: ShopperProductsTypes.Product[]): Product[] {
+export function reshapeProducts(
+  products: ShopperProductsTypes.Product[],
+): Product[] {
   const reshapedProducts = [];
   for (const product of products) {
     if (product) {
@@ -140,7 +145,7 @@ export function reshapeProducts(products: ShopperProductsTypes.Product[]): Produ
 }
 
 export function reshapeImages(
-  imageGroups: ShopperProductsTypes.ImageGroup[] | undefined
+  imageGroups: ShopperProductsTypes.ImageGroup[] | undefined,
 ): Image[] {
   if (!imageGroups) return [];
 
@@ -160,14 +165,14 @@ export function reshapeImages(
 
 export function reshapeVariants(
   variants: ShopperProductsTypes.Variant[],
-  product: ShopperProductsTypes.Product
+  product: ShopperProductsTypes.Product,
 ) {
   return variants.map((variant) => reshapeVariant(variant, product));
 }
 
 export function reshapeVariant(
   variant: ShopperProductsTypes.Variant,
-  product: ShopperProductsTypes.Product
+  product: ShopperProductsTypes.Product,
 ) {
   return {
     id: variant.productId,
@@ -176,7 +181,9 @@ export function reshapeVariant(
     selectedOptions:
       Object.entries(variant.variationValues || {}).map(([key, value]) => ({
         // TODO: we use the name here instead of the key because the frontend only uses names
-        name: product.variationAttributes?.find((attr) => attr.id === key)?.name || key,
+        name:
+          product.variationAttributes?.find((attr) => attr.id === key)?.name ||
+          key,
         // TODO: might be a cleaner way to do this, we need to look up the name on the list of values from the variationAttributes
         value:
           product.variationAttributes
@@ -193,7 +200,7 @@ export function reshapeVariant(
 export function reshapeProductItem(
   item: ShopperBasketsTypes.ProductItem,
   currency: string,
-  matchingProduct: Product
+  matchingProduct: Product,
 ): CartItem {
   return {
     id: item.itemId || "",
@@ -208,13 +215,17 @@ export function reshapeProductItem(
       id: item.productId || "",
       title: item.productName || "",
       selectedOptions:
-        Object.entries(matchingProduct.variationValues || {}).map(([key, value]) => ({
-          name: matchingProduct.options?.find((opt) => opt.id === key)?.name || key,
-          value:
-            matchingProduct.options
-              ?.find((opt) => opt.id === key)
-              ?.values?.find((v) => v.id === value)?.name || String(value),
-        })) || [],
+        Object.entries(matchingProduct.variationValues || {}).map(
+          ([key, value]) => ({
+            name:
+              matchingProduct.options?.find((opt) => opt.id === key)?.name ||
+              key,
+            value:
+              matchingProduct.options
+                ?.find((opt) => opt.id === key)
+                ?.values?.find((v) => v.id === value)?.name || String(value),
+          }),
+        ) || [],
       product: matchingProduct,
     },
   };
@@ -222,7 +233,7 @@ export function reshapeProductItem(
 
 export function reshapeBasket(
   basket: ShopperBasketsTypes.Basket,
-  cartItems: CartItem[]
+  cartItems: CartItem[],
 ): Cart {
   // For demo purposes, we are assuming there's a single shipment.
   const shipment = basket.shipments?.[0];
@@ -257,7 +268,8 @@ export function reshapeBasket(
         currencyCode: basket.currency || "USD",
       },
     },
-    totalQuantity: cartItems?.reduce((acc, item) => acc + (item?.quantity ?? 0), 0) ?? 0,
+    totalQuantity:
+      cartItems?.reduce((acc, item) => acc + (item?.quantity ?? 0), 0) ?? 0,
     lines: cartItems,
     shippingMethod: shippingMethod && {
       id: shippingMethod.id,
@@ -300,7 +312,7 @@ export function reshapeBasket(
 
 export function reshapeOrder(
   order: ShopperOrdersTypes.Order,
-  cartItems: CartItem[]
+  cartItems: CartItem[],
 ): Order {
   const cart = reshapeBasket(order as ShopperBasketsTypes.Basket, cartItems);
   return {

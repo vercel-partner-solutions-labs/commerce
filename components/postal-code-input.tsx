@@ -1,7 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CountryCode, PostalCodeConfig } from "@/lib/sfcc/constants";
-import { formatCAPostal, formatUKPostcode, formatUSZip } from "@/lib/sfcc/utils";
+import {
+  formatCAPostal,
+  formatUKPostcode,
+  formatUSZip,
+} from "@/lib/sfcc/utils";
 import { useEffect, useState } from "react";
 
 export interface PostalCodeInputProps
@@ -54,7 +58,7 @@ export function PostalCodeInput({
       ? value
       : typeof defaultValue === "string"
         ? defaultValue
-        : ""
+        : "",
   );
 
   // Get the configuration for the selected country

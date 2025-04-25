@@ -43,7 +43,7 @@ export const getCollections = cache(
   ["get-collections"],
   {
     tags: [TAGS.collections],
-  }
+  },
 );
 
 export async function getCollection(handle: string) {
@@ -56,7 +56,7 @@ export const getProduct = cache(
   ["get-product"],
   {
     tags: [TAGS.products],
-  }
+  },
 );
 
 export const getCollectionProducts = cache(
@@ -72,7 +72,7 @@ export const getCollectionProducts = cache(
     return await searchProducts({ categoryId: collection, limit, sortKey });
   },
   ["get-collection-products"],
-  { tags: [TAGS.products, TAGS.collections] }
+  { tags: [TAGS.products, TAGS.collections] },
 );
 
 export const getProducts = cache(
@@ -89,7 +89,7 @@ export const getProducts = cache(
   ["get-products"],
   {
     tags: [TAGS.products],
-  }
+  },
 );
 
 export async function createCart() {
@@ -153,7 +153,7 @@ export async function getCart() {
 }
 
 export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[]
+  lines: { merchandiseId: string; quantity: number }[],
 ) {
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
@@ -209,7 +209,7 @@ export async function removeFromCart(lineIds: string[]) {
 }
 
 export async function updateCart(
-  lines: { id: string; merchandiseId: string; quantity: number }[]
+  lines: { id: string; merchandiseId: string; quantity: number }[],
 ) {
   const cartId = (await cookies()).get("cartId")?.value!;
   // get the guest token to get the correct guest cart
@@ -229,7 +229,7 @@ export async function updateCart(
         basketId: cartId,
         itemId: line.id,
       },
-    })
+    }),
   );
 
   // wait for all removals to resolve
@@ -247,7 +247,7 @@ export async function updateCart(
           quantity: line.quantity,
         },
       ],
-    })
+    }),
   );
 
   // wait for all additions to resolve
@@ -325,12 +325,12 @@ async function getGuestUserAuthToken() {
     return await helpers.loginGuestUserPrivate(
       loginClient,
       {},
-      { clientSecret: process.env.SFCC_SECRET || "" }
+      { clientSecret: process.env.SFCC_SECRET || "" },
     );
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Failed to retrieve access token"
+      "Failed to retrieve access token",
     );
     throw new Error(error);
   }
@@ -405,7 +405,7 @@ async function searchProducts(options: {
           id: product.productId,
         },
       });
-    })
+    }),
   );
 
   return reshapeProducts(results);
@@ -424,7 +424,7 @@ async function getCartItems(createdBasket: ShopperBasketsTypes.Basket) {
         .map(async (l) => {
           const product = await getProduct(l.productId!);
           productsInCart.push(product);
-        })
+        }),
     );
 
     // Reshape the sfcc items and push them onto the cartItems
@@ -433,8 +433,8 @@ async function getCartItems(createdBasket: ShopperBasketsTypes.Basket) {
         reshapeProductItem(
           productItem,
           createdBasket.currency || "USD",
-          productsInCart.find((p) => p.id === productItem.productId)!
-        )
+          productsInCart.find((p) => p.id === productItem.productId)!,
+        ),
       );
     });
   }
@@ -461,14 +461,14 @@ export async function updateCustomerInfo(email: string) {
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Error updating basket email"
+      "Error updating basket email",
     );
     throw new Error(error);
   }
 }
 
 export async function updateShippingAddress(
-  shippingAddress: ShopperBasketsTypes.OrderAddress
+  shippingAddress: ShopperBasketsTypes.OrderAddress,
 ) {
   const cartId = (await cookies()).get("cartId")?.value!;
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -488,14 +488,14 @@ export async function updateShippingAddress(
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Error updating basket shipping address"
+      "Error updating basket shipping address",
     );
     throw new Error(error);
   }
 }
 
 export async function updateBillingAddress(
-  billingAddress: ShopperBasketsTypes.OrderAddress
+  billingAddress: ShopperBasketsTypes.OrderAddress,
 ) {
   const cartId = (await cookies()).get("cartId")?.value!;
   const guestToken = (await cookies()).get("guest_token")?.value;
@@ -513,7 +513,7 @@ export async function updateBillingAddress(
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Error updating basket billing address"
+      "Error updating basket billing address",
     );
     throw new Error(error);
   }
@@ -540,7 +540,7 @@ export async function updateShippingMethod(shippingMethodId: string) {
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Error updating shipping method"
+      "Error updating shipping method",
     );
     throw new Error(error);
   }
@@ -583,7 +583,7 @@ export async function addPaymentMethod(paymentData: {
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Error adding payment instrument to basket"
+      "Error adding payment instrument to basket",
     );
     throw new Error(error);
   }
@@ -609,7 +609,7 @@ export async function getShippingMethods() {
   } catch (e) {
     const error = await ensureSDKResponseError(
       e,
-      "Error fetching shipping methods"
+      "Error fetching shipping methods",
     );
     throw new Error(error);
   }

@@ -35,7 +35,7 @@ export function AddressForm({
 }: AddressFormProps) {
   const getFieldName = (name: string) => (prefix ? `${prefix}.${name}` : name);
   const [selectedCountry, setSelectedCountry] = useState<string>(
-    defaultValues.country || "US"
+    defaultValues.country || "US",
   );
 
   const handleCountryChange = (value: string) => {
@@ -58,7 +58,9 @@ export function AddressForm({
               required
               disabled={pending}
               defaultValue={defaultValues.firstName}
-              aria-invalid={errors?.[getFieldName("firstName")] ? "true" : "false"}
+              aria-invalid={
+                errors?.[getFieldName("firstName")] ? "true" : "false"
+              }
               aria-errormessage={
                 errors?.[getFieldName("firstName")]
                   ? `${getFieldName("firstName")}-error`
@@ -84,7 +86,9 @@ export function AddressForm({
               required
               disabled={pending}
               defaultValue={defaultValues.lastName}
-              aria-invalid={errors?.[getFieldName("lastName")] ? "true" : "false"}
+              aria-invalid={
+                errors?.[getFieldName("lastName")] ? "true" : "false"
+              }
               aria-errormessage={
                 errors?.[getFieldName("lastName")]
                   ? `${getFieldName("lastName")}-error`
@@ -209,7 +213,9 @@ export function AddressForm({
             disabled={pending}
             required
             error={
-              errors?.[getFieldName("zip")] ? errors[getFieldName("zip")]![0] : undefined
+              errors?.[getFieldName("zip")]
+                ? errors[getFieldName("zip")]![0]
+                : undefined
             }
           />
           <div className="space-y-1.5">
@@ -220,7 +226,9 @@ export function AddressForm({
               disabled={pending}
               defaultValue={defaultValues.country || "US"}
               onValueChange={handleCountryChange}
-              aria-invalid={errors?.[getFieldName("country")] ? "true" : "false"}
+              aria-invalid={
+                errors?.[getFieldName("country")] ? "true" : "false"
+              }
               aria-errormessage={
                 errors?.[getFieldName("country")]
                   ? `${getFieldName("country")}-error`

@@ -17,7 +17,7 @@ function SubmitButton({ type }: { type: "plus" | "minus" }) {
         "ease flex h-full min-w-[36px] max-w-[36px] flex-none items-center justify-center rounded-full p-2 transition-all duration-200 hover:border-neutral-800 hover:opacity-80",
         {
           "ml-auto": type === "minus",
-        }
+        },
       )}
     >
       {type === "plus" ? (

@@ -40,10 +40,14 @@ export function CheckoutCrumbs() {
               {item.label}
             </Link>
           ) : (
-            <span className={cn("text-sm", getLinkClasses(item.step))}>{item.label}</span>
+            <span className={cn("text-sm", getLinkClasses(item.step))}>
+              {item.label}
+            </span>
           )}
 
-          {index < array.length - 1 && <ChevronRight className="text-gray-400 h-4 w-4" />}
+          {index < array.length - 1 && (
+            <ChevronRight className="text-gray-400 h-4 w-4" />
+          )}
         </React.Fragment>
       ))}
     </nav>

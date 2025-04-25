@@ -1,4 +1,4 @@
-import { Menu, Page } from './types';
+import { Menu, Page } from "./types";
 
 /**
  * NOTE: This function returns a hardcoded menu structure for demonstration purposes.
@@ -16,51 +16,51 @@ export function getMenu(handle: string): Menu[] {
 export function getMenus() {
   return [
     {
-      handle: 'next-js-frontend-footer-menu',
+      handle: "next-js-frontend-footer-menu",
       links: [
         {
-          title: 'Home',
-          path: '/'
+          title: "Home",
+          path: "/",
         },
         {
-          title: 'About',
-          path: '/about'
+          title: "About",
+          path: "/about",
         },
         {
-          title: 'Terms & Conditions',
-          path: '/terms-conditions'
+          title: "Terms & Conditions",
+          path: "/terms-conditions",
         },
         {
-          title: 'Shipping & Return Policy',
-          path: '/shipping-return-policy'
+          title: "Shipping & Return Policy",
+          path: "/shipping-return-policy",
         },
         {
-          title: 'Privacy Policy',
-          path: '/privacy-policy'
+          title: "Privacy Policy",
+          path: "/privacy-policy",
         },
         {
-          title: 'FAQ',
-          path: '/freqently-asked-questions'
-        }
-      ]
+          title: "FAQ",
+          path: "/freqently-asked-questions",
+        },
+      ],
     },
     {
-      handle: 'next-js-frontend-header-menu',
+      handle: "next-js-frontend-header-menu",
       links: [
         {
-          title: 'New Arrivals',
-          path: '/search/newarrivals'
+          title: "New Arrivals",
+          path: "/search/newarrivals",
         },
         {
-          title: 'Women',
-          path: '/search/womens'
+          title: "Women",
+          path: "/search/womens",
         },
         {
-          title: 'Men',
-          path: '/search/mens'
-        }
-      ]
-    }
+          title: "Men",
+          path: "/search/mens",
+        },
+      ],
+    },
   ];
 }
 
@@ -87,25 +87,25 @@ export function getPages(): Page[] {
  * the setup for now but would be replaced with a CMS in a production environment.
  */
 const homePage = {
-  id: 'home',
-  title: 'Acme Store',
-  handle: '',
+  id: "home",
+  title: "Acme Store",
+  handle: "",
   body: ``,
   bodySummary:
-    'High-performance ecommerce store built with Next.js, Vercel, and Salesforce Commerce Cloud.',
+    "High-performance ecommerce store built with Next.js, Vercel, and Salesforce Commerce Cloud.",
   seo: {
-    title: 'Acme Store',
+    title: "Acme Store",
     description:
-      'High-performance ecommerce store built with Next.js, Vercel, and Salesforce Commerce Cloud.'
+      "High-performance ecommerce store built with Next.js, Vercel, and Salesforce Commerce Cloud.",
   },
-  createdAt: '2024-09-20T20:15:06Z',
-  updatedAt: '2024-09-20T20:15:06Z'
+  createdAt: "2024-09-20T20:15:06Z",
+  updatedAt: "2024-09-20T20:15:06Z",
 };
 
 const aboutPage = {
-  id: 'about',
-  title: 'About',
-  handle: 'about',
+  id: "about",
+  title: "About",
+  handle: "about",
   body: `<div className="prose mx-auto max-w-6xl text-base leading-7 text-black prose-headings:mt-8 prose-headings:font-semibold prose-headings:tracking-wide prose-headings:text-black prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg prose-a:text-black prose-a:underline hover:prose-a:text-neutral-300 prose-strong:text-black prose-ol:mt-8 prose-ol:list-decimal prose-ol:pl-6 prose-ul:mt-8 prose-ul:list-disc prose-ul:pl-6 dark:text-white dark:prose-headings:text-white dark:prose-a:text-white dark:prose-strong:text-white mb-8"><p>This website is built with <a href="https://nextjs.org/commerce" title="Next.js Commerce">Next.js Commerce</a>, which is a ecommerce template for creating a headless Salesforce Commerce Cloud storefront.</p>
 <p>Support for real-world commerce features including:</p>
 <ul>
@@ -131,75 +131,77 @@ const aboutPage = {
 <li>Automatic light/dark mode based on system settings</li>
 <li>And more!</li>
 </ul></div>`,
-  bodySummary: 'This website is built with Next.js, Vercel, and Salesforce Commerce Cloud.',
+  bodySummary:
+    "This website is built with Next.js, Vercel, and Salesforce Commerce Cloud.",
   seo: {
-    title: 'About',
-    description: 'This website is built with Next.js, Vercel, and Salesforce Commerce Cloud.'
+    title: "About",
+    description:
+      "This website is built with Next.js, Vercel, and Salesforce Commerce Cloud.",
   },
-  createdAt: '2024-09-20T20:15:06Z',
-  updatedAt: '2024-09-20T20:15:06Z'
+  createdAt: "2024-09-20T20:15:06Z",
+  updatedAt: "2024-09-20T20:15:06Z",
 };
 
 const termsPage = {
-  id: 'terms',
-  title: 'Terms & Conditions',
-  handle: 'terms-conditions',
+  id: "terms",
+  title: "Terms & Conditions",
+  handle: "terms-conditions",
   body: `<div className="prose mx-auto max-w-6xl text-base leading-7 text-black prose-headings:mt-8 prose-headings:font-semibold prose-headings:tracking-wide prose-headings:text-black prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg prose-a:text-black prose-a:underline hover:prose-a:text-neutral-300 prose-strong:text-black prose-ol:mt-8 prose-ol:list-decimal prose-ol:pl-6 prose-ul:mt-8 prose-ul:list-disc prose-ul:pl-6 dark:text-white dark:prose-headings:text-white dark:prose-a:text-white dark:prose-strong:text-white mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam libero justo laoreet sit amet cursus sit. Dictumst quisque sagittis purus sit amet volutpat consequat. Egestas diam in arcu cursus euismod. Sed faucibus turpis in eu mi bibendum. Consectetur libero id faucibus nisl. Quisque id diam vel quam elementum. Eros donec ac odio tempor orci dapibus ultrices. Turpis tincidunt id aliquet risus. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio.</div>`,
   bodySummary:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   seo: {
-    title: 'Terms & Conditions',
+    title: "Terms & Conditions",
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
   },
-  createdAt: '2024-09-20T20:15:06Z',
-  updatedAt: '2024-09-20T20:15:06Z'
+  createdAt: "2024-09-20T20:15:06Z",
+  updatedAt: "2024-09-20T20:15:06Z",
 };
 
 const shippingPage = {
-  id: 'shipping',
-  title: 'Shipping & Return Policy',
-  handle: 'shipping-return-policy',
+  id: "shipping",
+  title: "Shipping & Return Policy",
+  handle: "shipping-return-policy",
   body: `<div className="prose mx-auto max-w-6xl text-base leading-7 text-black prose-headings:mt-8 prose-headings:font-semibold prose-headings:tracking-wide prose-headings:text-black prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg prose-a:text-black prose-a:underline hover:prose-a:text-neutral-300 prose-strong:text-black prose-ol:mt-8 prose-ol:list-decimal prose-ol:pl-6 prose-ul:mt-8 prose-ul:list-disc prose-ul:pl-6 dark:text-white dark:prose-headings:text-white dark:prose-a:text-white dark:prose-strong:text-white mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam libero justo laoreet sit amet cursus sit. Dictumst quisque sagittis purus sit amet volutpat consequat. Egestas diam in arcu cursus euismod. Sed faucibus turpis in eu mi bibendum. Consectetur libero id faucibus nisl. Quisque id diam vel quam elementum. Eros donec ac odio tempor orci dapibus ultrices. Turpis tincidunt id aliquet risus. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio.</div>`,
   bodySummary:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   seo: {
-    title: 'Shipping & Return Policy',
+    title: "Shipping & Return Policy",
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
   },
-  createdAt: '2024-09-20T20:15:06Z',
-  updatedAt: '2024-09-20T20:15:06Z'
+  createdAt: "2024-09-20T20:15:06Z",
+  updatedAt: "2024-09-20T20:15:06Z",
 };
 
 const privacyPage = {
-  id: 'privacy',
-  title: 'Privacy Policy',
-  handle: 'privacy-policy',
+  id: "privacy",
+  title: "Privacy Policy",
+  handle: "privacy-policy",
   body: `<div className="prose mx-auto max-w-6xl text-base leading-7 text-black prose-headings:mt-8 prose-headings:font-semibold prose-headings:tracking-wide prose-headings:text-black prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg prose-a:text-black prose-a:underline hover:prose-a:text-neutral-300 prose-strong:text-black prose-ol:mt-8 prose-ol:list-decimal prose-ol:pl-6 prose-ul:mt-8 prose-ul:list-disc prose-ul:pl-6 dark:text-white dark:prose-headings:text-white dark:prose-a:text-white dark:prose-strong:text-white mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam libero justo laoreet sit amet cursus sit. Dictumst quisque sagittis purus sit amet volutpat consequat. Egestas diam in arcu cursus euismod. Sed faucibus turpis in eu mi bibendum. Consectetur libero id faucibus nisl. Quisque id diam vel quam elementum. Eros donec ac odio tempor orci dapibus ultrices. Turpis tincidunt id aliquet risus. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio.</div>`,
   bodySummary:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   seo: {
-    title: 'Privacy Policy',
+    title: "Privacy Policy",
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
   },
-  createdAt: '2024-09-20T20:15:06Z',
-  updatedAt: '2024-09-20T20:15:06Z'
+  createdAt: "2024-09-20T20:15:06Z",
+  updatedAt: "2024-09-20T20:15:06Z",
 };
 
 const faqPage = {
-  id: 'faq',
-  title: 'Frequently Asked Questions',
-  handle: 'freqently-asked-questions',
+  id: "faq",
+  title: "Frequently Asked Questions",
+  handle: "freqently-asked-questions",
   body: `<div className="prose mx-auto max-w-6xl text-base leading-7 text-black prose-headings:mt-8 prose-headings:font-semibold prose-headings:tracking-wide prose-headings:text-black prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg prose-a:text-black prose-a:underline hover:prose-a:text-neutral-300 prose-strong:text-black prose-ol:mt-8 prose-ol:list-decimal prose-ol:pl-6 prose-ul:mt-8 prose-ul:list-disc prose-ul:pl-6 dark:text-white dark:prose-headings:text-white dark:prose-a:text-white dark:prose-strong:text-white mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam libero justo laoreet sit amet cursus sit. Dictumst quisque sagittis purus sit amet volutpat consequat. Egestas diam in arcu cursus euismod. Sed faucibus turpis in eu mi bibendum. Consectetur libero id faucibus nisl. Quisque id diam vel quam elementum. Eros donec ac odio tempor orci dapibus ultrices. Turpis tincidunt id aliquet risus. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio.</div>`,
   bodySummary:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   seo: {
-    title: 'Frequently Asked Questions',
+    title: "Frequently Asked Questions",
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
   },
-  createdAt: '2024-09-20T20:15:06Z',
-  updatedAt: '2024-09-20T20:15:06Z'
+  createdAt: "2024-09-20T20:15:06Z",
+  updatedAt: "2024-09-20T20:15:06Z",
 };

@@ -13,7 +13,12 @@ import { Order } from "@/lib/sfcc/types";
 import { CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "../cart/cart-context";
-import { AmexIcon, DiscoverIcon, MasterCardIcon, VisaIcon } from "../icons/cc-icons";
+import {
+  AmexIcon,
+  DiscoverIcon,
+  MasterCardIcon,
+  VisaIcon,
+} from "../icons/cc-icons";
 import Price from "../price";
 import { useCurrentCheckoutStep } from "./checkout-context";
 
@@ -72,7 +77,11 @@ export function CheckoutStatus({
       )}
       <CardContent className="p-6 flex flex-col gap-4">
         {customerEmail && checkoutStep > CheckoutStep.Information && (
-          <LineItem label="Contact" step={CheckoutStep.Information} editable={editable}>
+          <LineItem
+            label="Contact"
+            step={CheckoutStep.Information}
+            editable={editable}
+          >
             {customerEmail}
           </LineItem>
         )}
@@ -80,11 +89,16 @@ export function CheckoutStatus({
         {shippingAddress && checkoutStep > CheckoutStep.Information && (
           <>
             <Separator />
-            <LineItem label="Ship to" step={CheckoutStep.Information} editable={editable}>
+            <LineItem
+              label="Ship to"
+              step={CheckoutStep.Information}
+              editable={editable}
+            >
               {shippingAddress.address1}
-              {shippingAddress.address2 ? `, ${shippingAddress.address2}` : ""},{" "}
-              {shippingAddress.city} {shippingAddress.state}, {shippingAddress.zip},{" "}
-              {shippingAddress.country}
+              {shippingAddress.address2
+                ? `, ${shippingAddress.address2}`
+                : ""}, {shippingAddress.city} {shippingAddress.state},{" "}
+              {shippingAddress.zip}, {shippingAddress.country}
             </LineItem>
           </>
         )}
@@ -108,7 +122,9 @@ export function CheckoutStatus({
                   />
                 )}
               </div>
-              <p className="text-sm text-neutral-400">{shippingMethod.description}</p>
+              <p className="text-sm text-neutral-400">
+                {shippingMethod.description}
+              </p>
             </LineItem>
           </>
         )}
@@ -116,7 +132,11 @@ export function CheckoutStatus({
         {payment && checkoutStep > CheckoutStep.Payment && (
           <>
             <Separator />
-            <LineItem label="Payment" step={CheckoutStep.Payment} editable={editable}>
+            <LineItem
+              label="Payment"
+              step={CheckoutStep.Payment}
+              editable={editable}
+            >
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                   {CardIcon ? (
@@ -141,7 +161,8 @@ export function CheckoutStatus({
                           {billingAddress.address1}
                           {billingAddress.address2
                             ? `, ${billingAddress.address2}`
-                            : ""}, {billingAddress.city} {billingAddress.state},{" "}
+                            : ""}
+                          , {billingAddress.city} {billingAddress.state},{" "}
                           {billingAddress.zip}, {billingAddress.country}
                         </>
                       )}

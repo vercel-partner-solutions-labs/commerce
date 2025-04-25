@@ -2,7 +2,7 @@ import OpengraphImage from "components/opengraph-image";
 import { getCollection } from "lib/sfcc";
 
 export default async function Image({
-  params
+  params,
 }: {
   params: { collection: string };
 }) {

@@ -5,13 +5,18 @@ import { GridTileImage } from "components/grid/tile";
 import { useProduct, useUpdateURL } from "components/product/product-context";
 import Image from "next/image";
 
-export function Gallery({ images }: { images: { src: string; altText: string }[] }) {
+export function Gallery({
+  images,
+}: {
+  images: { src: string; altText: string }[];
+}) {
   const { state, updateImage } = useProduct();
   const updateURL = useUpdateURL();
   const imageIndex = state.image ? parseInt(state.image) : 0;
 
   const nextImageIndex = imageIndex + 1 < images.length ? imageIndex + 1 : 0;
-  const previousImageIndex = imageIndex === 0 ? images.length - 1 : imageIndex - 1;
+  const previousImageIndex =
+    imageIndex === 0 ? images.length - 1 : imageIndex - 1;
 
   const buttonClassName =
     "h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center";

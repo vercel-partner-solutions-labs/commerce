@@ -10,12 +10,17 @@ export function ProductPrice({ product }: { product: Product }) {
 
   const selectedVariant = variants.find((variant) =>
     variant.selectedOptions.every(
-      (option) => option.value === state[option.name.toLowerCase()]
-    )
+      (option) => option.value === state[option.name.toLowerCase()],
+    ),
   );
 
   if (selectedVariant) {
-    return <Price amount={selectedVariant.price.amount} currencyCode={currencyCode} />;
+    return (
+      <Price
+        amount={selectedVariant.price.amount}
+        currencyCode={currencyCode}
+      />
+    );
   }
 
   return (

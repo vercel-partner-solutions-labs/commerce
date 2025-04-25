@@ -21,12 +21,19 @@ export function VariantSelector({
   const { state, updateOption } = useProduct();
   const updateURL = useUpdateURL();
   const hasNoOptionsOrJustOneOption =
-    !options.length || (options.length === 1 && options[0]?.values.length === 1);
+    !options.length ||
+    (options.length === 1 && options[0]?.values.length === 1);
 
   useEffect(() => {
-    const colorOption = options.find((option) => option.name.toLowerCase() === "color");
+    const colorOption = options.find(
+      (option) => option.name.toLowerCase() === "color",
+    );
 
-    if (colorOption && colorOption.values.length === 1 && colorOption.values[0]) {
+    if (
+      colorOption &&
+      colorOption.values.length === 1 &&
+      colorOption.values[0]
+    ) {
       const colorValue = colorOption.values[0].name;
       if (colorValue && !state["color"]) {
         startTransition(() => {
@@ -49,7 +56,7 @@ export function VariantSelector({
         ...accumulator,
         [option.name.toLowerCase()]: option.value,
       }),
-      {}
+      {},
     ),
   }));
 
@@ -62,21 +69,25 @@ export function VariantSelector({
             const optionNameLowerCase = option.name.toLowerCase();
 
             // Base option params on current selectedOptions so we can preserve any other param state.
-            const optionParams = { ...state, [optionNameLowerCase]: value.name };
+            const optionParams = {
+              ...state,
+              [optionNameLowerCase]: value.name,
+            };
 
             // Filter out invalid options and check if the option combination is available for sale.
-            const filtered = Object.entries(optionParams).filter(([key, value]) =>
-              options.find(
-                (option) =>
-                  option.name.toLowerCase() === key &&
-                  option.values.some((val) => val.name === value)
-              )
+            const filtered = Object.entries(optionParams).filter(
+              ([key, value]) =>
+                options.find(
+                  (option) =>
+                    option.name.toLowerCase() === key &&
+                    option.values.some((val) => val.name === value),
+                ),
             );
             const isAvailableForSale = combinations.find((combination) =>
               filtered.every(
                 ([key, value]) =>
-                  combination[key] === value && combination.availableForSale
-              )
+                  combination[key] === value && combination.availableForSale,
+              ),
             );
 
             // The option is active if it's in the selected options.
@@ -85,7 +96,10 @@ export function VariantSelector({
             return (
               <button
                 formAction={() => {
-                  const newState = updateOption(optionNameLowerCase, value.name);
+                  const newState = updateOption(
+                    optionNameLowerCase,
+                    value.name,
+                  );
                   updateURL(newState);
                 }}
                 key={value.id}
@@ -100,7 +114,7 @@ export function VariantSelector({
                       !isActive && isAvailableForSale,
                     "relative z-10 cursor-not-allowed overflow-hidden bg-neutral-100 text-neutral-500 ring-1 ring-neutral-300 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-neutral-300 before:transition-transform dark:bg-neutral-900 dark:text-neutral-400 dark:ring-neutral-700 dark:before:bg-neutral-700":
                       !isAvailableForSale,
-                  }
+                  },
                 )}
               >
                 {value.name}

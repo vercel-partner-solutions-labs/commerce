@@ -70,7 +70,11 @@ function EmptyCart() {
       <p className="text-center text-sm text-gray-500">
         Looks like you haven't added any items to your cart yet.
       </p>
-      <Link href="/" prefetch className={buttonVariants({ variant: "outline" })}>
+      <Link
+        href="/"
+        prefetch
+        className={buttonVariants({ variant: "outline" })}
+      >
         Continue Shopping
       </Link>
     </div>

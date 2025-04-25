@@ -32,7 +32,7 @@ const Price = ({
   } else if (amount || minAmount || maxAmount) {
     priceDisplay = formatPrice(
       amount || minAmount || maxAmount || "9999.99",
-      currencyCode
+      currencyCode,
     );
   }
 

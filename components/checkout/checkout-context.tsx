@@ -1,6 +1,10 @@
 "use client";
 
-import { CheckoutStep, checkoutStepRoutes, FormActionState } from "@/lib/sfcc/constants";
+import {
+  CheckoutStep,
+  checkoutStepRoutes,
+  FormActionState,
+} from "@/lib/sfcc/constants";
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
@@ -20,18 +24,23 @@ type CheckoutContextType = {
   setGlobalError: (error: string | null | undefined) => void;
 };
 
-const CheckoutContext = createContext<CheckoutContextType | undefined>(undefined);
+const CheckoutContext = createContext<CheckoutContextType | undefined>(
+  undefined,
+);
 
 // Checkout Provider component, for handling client checkout state.
 export function CheckoutProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [globalError, setGlobalError] = useState<CheckoutContextType["globalError"]>();
+  const [globalError, setGlobalError] =
+    useState<CheckoutContextType["globalError"]>();
   const currentStep = useCurrentCheckoutStep();
 
   const goToNextStep = () => {
     const nextStep = currentStep + 1;
     if (nextStep in CheckoutStep) {
-      router.push(checkoutStepRoutes[nextStep as keyof typeof checkoutStepRoutes]);
+      router.push(
+        checkoutStepRoutes[nextStep as keyof typeof checkoutStepRoutes],
+      );
     }
   };
 
@@ -47,10 +56,14 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       globalError,
       setGlobalError,
     }),
-    [currentStep, globalError]
+    [currentStep, globalError],
   );
 
-  return <CheckoutContext.Provider value={value}>{children}</CheckoutContext.Provider>;
+  return (
+    <CheckoutContext.Provider value={value}>
+      {children}
+    </CheckoutContext.Provider>
+  );
 }
 
 // Returns the checkout context.
@@ -67,21 +80,24 @@ export function useCheckout() {
 export function useCheckoutActionState<T extends z.ZodTypeAny>(
   action: (
     prevState: FormActionState<T>,
-    formData: FormData
-  ) => Promise<FormActionState<T>>
+    formData: FormData,
+  ) => Promise<FormActionState<T>>,
 ) {
   const { setGlobalError, goToNextStep } = useCheckout();
 
-  return useActionState(async (prevState: FormActionState, formData: FormData) => {
-    const state = await action(prevState, formData);
+  return useActionState(
+    async (prevState: FormActionState, formData: FormData) => {
+      const state = await action(prevState, formData);
 
-    if (!state) {
-      goToNextStep();
-    } else {
-      setGlobalError(state?.errors?.formErrors?.[0]);
-      return state;
-    }
-  }, undefined);
+      if (!state) {
+        goToNextStep();
+      } else {
+        setGlobalError(state?.errors?.formErrors?.[0]);
+        return state;
+      }
+    },
+    undefined,
+  );
 }
 
 // Returns the current checkout step based on the pathname.
