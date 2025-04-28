@@ -6,10 +6,6 @@ export type ExtractVariables<T> = T extends { variables: object }
   ? T["variables"]
   : never;
 
-// ------------------------
-// Checkout Helpers
-// ------------------------
-
 export function getCartCheckoutStep(cart: Cart | undefined): CheckoutStep {
   if (!cart) return CheckoutStep.Information;
 
@@ -32,10 +28,6 @@ export function getPathForCartCheckoutStep(cart: Cart | undefined): string {
   const step = getCartCheckoutStep(cart);
   return checkoutStepRoutes[step];
 }
-
-// ------------------------
-// Form Helpers
-// ------------------------
 
 export function formatCreditCardNumber(value: string): string {
   // Remove all non-digit characters
@@ -197,7 +189,7 @@ export const formatUKPhone = (value: string): string => {
 // Helper for returning the expected error state to actions instead of throwing.
 export const handleFormActionError = (
   error: unknown,
-  defaultMessage: string,
+  defaultMessage: string
 ) => {
   return {
     errors: {
@@ -215,7 +207,7 @@ type PrefixedShape<T extends z.ZodObject<any>, P extends string> = {
 // Creates a new Zod schema with all keys prefixed with the given string.
 export const prefixSchema = <T extends z.ZodObject<any>, P extends string>(
   schema: T,
-  prefix: P,
+  prefix: P
 ): z.ZodObject<PrefixedShape<T, P>> => {
   if (!prefix) return schema as z.ZodObject<PrefixedShape<T, P>>;
 
@@ -250,8 +242,8 @@ export const validateEnvironmentVariables = () => {
   if (missingEnvironmentVariables.length) {
     throw new Error(
       `The following environment variables are missing. Your site will not work without them. Read more: https://vercel.com/docs/integrations/shopify#configure-environment-variables\n\n${missingEnvironmentVariables.join(
-        "\n",
-      )}\n`,
+        "\n"
+      )}\n`
     );
   }
 };
