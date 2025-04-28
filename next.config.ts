@@ -3,8 +3,7 @@ export default {
     ppr: true,
     inlineCss: true,
     useCache: true,
-    reactOwnerStack: true,
-    newDevOverlay: true,
+    clientSegmentCache: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
