@@ -20,6 +20,7 @@ function PathFilterItem({ item }: { item: PathFilterItem }) {
   return (
     <li className="mt-2 flex text-black dark:text-white" key={item.title}>
       <DynamicTag
+        prefetch={!active || undefined}
         href={createUrl(item.path, newParams)}
         className={clsx(
           "w-full text-sm underline-offset-4 hover:underline dark:hover:text-neutral-100",
@@ -55,7 +56,7 @@ function SortFilterItem({ item }: { item: SortFilterItem }) {
       key={item.title}
     >
       <DynamicTag
-        prefetch={true}
+        prefetch={!active || undefined}
         href={href}
         className={clsx("w-full hover:underline hover:underline-offset-4", {
           "underline underline-offset-4": active,
