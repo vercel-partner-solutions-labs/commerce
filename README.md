@@ -1,10 +1,10 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fcommerce-sfcc&env=NEXT_PUBLIC_VERCEL_URL,SFCC_CLIENT_ID,SFCC_ORGANIZATIONID,SFCC_SECRET,SFCC_SHORTCODE,SFCC_SITEID,SITE_NAME,SFCC_SANDBOX_DOMAIN,SFCC_OPENCOMMERCE_SHOP_API_ENDPOINT,SFCC_REVALIDATION_SECRET&project-name=nextjs-commerce-sfcc&repository-name=nextjs-commerce-sfcc&demo-title=ACME%20Store&demo-description=A%20high-performance%20ecommerce%20store%20built%20with%20Next.js%2C%20Vercel%2C%20and%20Salesforce%20Commerce%20Cloud&demo-url=https%3A%2F%2Fnextjs-salesforce-commerce-cloud.vercel.app%2F)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fcommerce-sfcc&env=COMPANY_NAME,NEXT_PUBLIC_VERCEL_URL,SFCC_CLIENT_ID,SFCC_ORGANIZATIONID,SFCC_SECRET,SFCC_SHORTCODE,SFCC_SITEID,SITE_NAME,SFCC_REVALIDATION_SECRET&project-name=nextjs-commerce-sfcc&repository-name=nextjs-commerce-sfcc&demo-title=ACME%20Store&demo-description=A%20high-performance%20ecommerce%20store%20built%20with%20Next.js%2C%20Vercel%2C%20and%20Salesforce%20Commerce%20Cloud&demo-url=https%3A%2F%2Fnextjs-salesforce-commerce-cloud.vercel.app%2F)
 
 # Next.js Commerce
 
 A high-perfomance, server-rendered Next.js App Router ecommerce application.
 
-This template uses React Server Components, Server Actions, `Suspense`, `useOptimistic`, and more.
+This template uses React Server Components, Server Actions, `Suspense`, `useOptimistic`, `use cache` and more.
 
 <h3 id="v1-note"></h3>
 
@@ -43,13 +43,3 @@ pnpm dev
 ```
 
 Your app should now be running on [localhost:3000](http://localhost:3000/).
-
-<details>
-  <summary>Expand if you work at Vercel and want to run locally and / or contribute</summary>
-
-1. Run `vc link`.
-1. Select the `Vercel Solutions` scope.
-1. Connect to the existing `commerce-sfcc` project.
-1. Run `vc env pull` to get environment variables.
-1. Run `pnpm dev` to ensure everything is working correctly.
-</details>
