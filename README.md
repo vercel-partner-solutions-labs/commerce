@@ -50,13 +50,13 @@ Create these two categories and assign products to them within Business Manager.
 
 ## Running locally
 
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+You will need to use the environment variables [defined in _.env.example_](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a _.env_ file is all that is necessary.
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Salesforce Commerce Cloud store.
+> Note: You should not commit your _.env_ file or it will expose secrets that will allow others to control your Salesforce Commerce Cloud store.
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+1. Install Vercel CLI: _npm i -g vercel_
+2. Link local instance with Vercel and GitHub accounts (creates _.vercel_ directory): _vercel link_
+3. Download your environment variables: _vercel env pull_
 
 ```bash
 pnpm install
